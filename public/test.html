@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Vercel - Neon</title>
+</head>
+<body style="font-family: sans-serif; padding: 20px;">
+    <h2>Prueba de Conexión a Base de Datos</h2>
+    <button onclick="probarDB()" style="padding: 10px; font-size: 16px;">
+        Traer Colegios
+    </button>
+    <pre id="resultado" style="background: #f4f4f4; padding: 15px; margin-top: 20px;"></pre>
+
+    <script>
+        async function probarDB() {
+            const btn = document.querySelector('button');
+            const res = document.getElementById('resultado');
+            
+            btn.textContent = "Cargando...";
+            res.textContent = "Haciendo petición a /api/test-bd ...";
+            
+            try {
+                const response = await fetch('/api/test-bd');
+                const data = await response.json();
+                res.textContent = JSON.stringify(data, null, 2);
+            } catch (err) {
+                res.textContent = "Error de red: " + err.message;
+            }
+            btn.textContent = "Traer Colegios";
+        }
+    </script>
+</body>
+</html>
