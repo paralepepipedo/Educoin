@@ -1,0 +1,29 @@
+{
+  "name": "educoins",
+  "version": "1.0.0",
+  "description": "Plataforma educativa gamificada para Chile - 1° a 8° básico",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.6.0"
+  },
+  "scripts": {
+    "local": "node --env-file=.env.local server.js",
+    "build": "echo 'Static site - no build step'",
+    "start": "node --env-file=.env.local server.js"
+  },
+  "dependencies": {
+    "@clerk/backend": "^1.13.0",
+    "@neondatabase/serverless": "^1.0.2",
+    "dotenv": "^17.3.1",
+    "telegram": "^2.26.0"
+  },
+  "devDependencies": {
+    "vercel": "^37.0.0"
+  },
+  "comments": {
+    "@clerk/backend": "Verificar tokens JWT en las APIs serverless",
+    "@neondatabase/serverless": "Conectar con Neon PostgreSQL desde Vercel Edge",
+    "telegram": "Bot de Telegram para notificaciones"
+  }
+}
