@@ -152,10 +152,14 @@ export default async function handler(request) {
     const config = await getConfigEconomia();
     const monedasBienvenida = Number(config.bienvenida || 100);
 
+    // Avatar aleatorio de bienvenida
+    const avatarsDisponibles = ['🐰', '🐸', '🦋', '🤖', '🐶', '🐱', '🦊', '🐼'];
+    const avatarAleatorio = avatarsDisponibles[Math.floor(Math.random() * avatarsDisponibles.length)];
+
     const rows = await query(
       `INSERT INTO perfiles
-        (clerk_id, nombre, email, grado_ingreso, anio_ingreso, monedas, colegio_id)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
+        (clerk_id, nombre, email, grado_ingreso, anio_ingreso, monedas, colegio_id, avatar_base)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        RETURNING *`,
       [
         clerkId,
@@ -165,6 +169,7 @@ export default async function handler(request) {
         anio_ingreso || new Date().getFullYear(),
         monedasBienvenida,
         colegio_id || null,
+        avatarAleatorio,
       ]
     );
 

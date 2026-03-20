@@ -1,7 +1,8 @@
 // ============================================
 // ARCHIVO: Api/admin.js
-// VERSIÓN: 1.7.0 — 2026-03-08
+// VERSIÓN: 1.8.0 — 2026-03-18
 // Changelog:
+//   1.8.0 - toggle_forzada: activa/desactiva flag forzada en pruebas_activas
 //   1.7.0 - colegio_id en getEvaluacionesAdmin
 //   1.6.0 - Agregar action=colegios para selector en formulario
 //   1.5.0 - Fix fecha timezone y colegio_id en evaluaciones
@@ -452,14 +453,17 @@ async function crearItem(body) {
       tipo || 'cosmético',
       Number(precio),
       Number(nivel_minimo) || 1,
-      emoji || null,
+      emoji || '',
       imagen_url || null,
       descripcion || null,
-      stock !== undefined && stock !== null ? Number(stock) : null,
+      stock !== undefined && stock !== null && stock !== '' ? Number(stock) : null,
       Boolean(compra_repetida),
       disponible !== false,
-      duracion_horas ? Number(duracion_horas) : null,
-      multiplicador ? Number(multiplicador) : null,
+
+      // <-- CORRECCIONES AQUÍ: 0 y 1 en lugar de null para cumplir con NOT NULL de Neon
+      duracion_horas ? Number(duracion_horas) : 0,
+      multiplicador ? Number(multiplicador) : 1,
+
       alcance || 'todo',
     ]
   );
@@ -477,6 +481,9 @@ async function editarItem(body) {
   if (campos.alcance === null || campos.alcance === undefined) campos.alcance = 'todo';
   if (campos.duracion_horas === null) campos.duracion_horas = 0;
   if (campos.multiplicador === null) campos.multiplicador = 1;
+
+  // <-- NUEVA PROTECCIÓN: Si al editar se envía nulo, se cambia por texto en blanco
+  if (campos.emoji === null) campos.emoji = '';
 
   const allowed = [
     'nombre', 'categoria', 'tipo', 'precio', 'nivel_minimo',
@@ -644,6 +651,20 @@ async function marcarEntregado(body, clerkId) {
 }
 
 // ============================================
+// POST: Activar/Desactivar flag forzada en prueba
+// ============================================
+async function toggleForzadaPrueba(body) {
+  const { id, forzada } = body;
+  if (!id) return resError('Falta id');
+  if (typeof forzada !== 'boolean') return resError('forzada debe ser true o false');
+  await query(
+    `UPDATE public.pruebas_activas SET forzada = $1, updated_at = now() WHERE id = $2`,
+    [forzada, id]
+  );
+  return res({ ok: true, id, forzada });
+}
+
+// ============================================
 // HANDLER PRINCIPAL
 // ============================================
 export default async function handler(request) {
@@ -684,6 +705,20 @@ export default async function handler(request) {
     if (body.action === 'activar_evento') return activarEvento(body);
     if (body.action === 'crear_item') return crearItem(body);
     if (body.action === 'crear_evaluacion') return crearEvaluacion(body);
+    if (body.action === 'guardar_banco_preguntas') return guardarBancoPreguntas(body);
+    if (body.action === 'get_banco_stats') return getBancoStats();
+    if (body.action === 'crear_prueba_activa') return crearPruebaActiva(body);
+    if (body.action === 'get_pruebas_activas') return getPruebasActivas();
+    if (body.action === 'toggle_prueba') return togglePruebaActiva(body);
+    if (body.action === 'toggle_forzada') return toggleForzadaPrueba(body);
+    if (body.action === 'get_preguntas_unidad') return getPreguntasUnidad(body);
+    if (body.action === 'eliminar_pregunta_banco') return eliminarPreguntaBanco(body);
+    if (body.action === 'editar_pregunta_banco') return editarPreguntaBanco(body);
+    if (body.action === 'editar_prueba_activa') return editarPruebaActiva(body);
+    if (body.action === 'get_banco_filas') return getBancoFilas();
+    if (body.action === 'eliminar_fila_banco') return eliminarFilaBanco(body);
+    if (body.action === 'eliminar_prueba_activa') return eliminarPruebaActiva(body);
+
     return resError('action no reconocida');
   }
 
@@ -707,4 +742,171 @@ export default async function handler(request) {
   }
 
   return resError('Método no permitido', 405);
+}
+// ============================================
+// POST: Guardar JSON de IA en el Banco de Pruebas
+// ============================================
+async function guardarBancoPreguntas(body) {
+  const { asignatura, grado, unidad, tema, preguntas } = body;
+
+  if (!asignatura || !grado || !unidad || !preguntas) {
+    return resError('Faltan datos obligatorios');
+  }
+
+  // Insertar en Neon (preguntas ya viene como array desde el frontend)
+  const rows = await query(
+    `INSERT INTO banco_preguntas (asignatura, grado, unidad, tema, preguntas)
+     VALUES ($1, $2, $3, $4, $5) RETURNING id`,
+    [
+      asignatura,
+      Number(grado),
+      Number(unidad),
+      tema || '',
+      JSON.stringify(preguntas)
+    ]
+  );
+
+  return res({ ok: true, id: rows[0].id });
+}
+// ============================================
+// POST: Obtener estadísticas del Almacén
+// ============================================
+async function getBancoStats() {
+  const rows = await query(`
+    SELECT asignatura, grado, unidad, SUM(jsonb_array_length(preguntas))::int as total_preguntas
+    FROM banco_preguntas
+    GROUP BY asignatura, grado, unidad
+    ORDER BY asignatura, grado, unidad
+  `);
+  return res({ ok: true, stats: rows });
+}
+
+// ============================================
+// POST: Armar y Activar Prueba
+// ============================================
+async function crearPruebaActiva(body) {
+  const { nombre, asignatura, grado, unidades, preguntas_por_intento, recompensa_monedas, recompensa_xp } = body;
+  if (!nombre || !unidades || unidades.length === 0) return resError('Faltan datos');
+
+  const rows = await query(`
+    INSERT INTO pruebas_activas 
+      (nombre, asignatura, grado, unidades, preguntas_por_intento, recompensa_monedas, recompensa_xp, activa)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, true) RETURNING id
+  `, [nombre, asignatura, Number(grado), unidades, Number(preguntas_por_intento), Number(recompensa_monedas), Number(recompensa_xp)]);
+
+  return res({ ok: true, id: rows[0].id });
+}
+
+// ============================================
+// POST: Listar Pruebas Activas
+// ============================================
+async function getPruebasActivas() {
+  const rows = await query(`SELECT * FROM pruebas_activas ORDER BY created_at DESC`);
+  return res({ ok: true, pruebas: rows });
+}
+
+// ============================================
+// POST: Activar/Desactivar Prueba
+// ============================================
+async function togglePruebaActiva(body) {
+  if (!body.id) return resError('Falta id');
+  await query(`UPDATE pruebas_activas SET activa = $1 WHERE id = $2`, [Boolean(body.estado), body.id]);
+  return res({ ok: true });
+}
+// ============================================
+// POST: Obtener preguntas específicas para Editar
+// ============================================
+async function getPreguntasUnidad(body) {
+  const { asignatura, grado, unidad } = body;
+  if (!asignatura || !grado || !unidad) return resError('Faltan filtros');
+
+  const rows = await query(`
+    SELECT id, tema, preguntas 
+    FROM banco_preguntas 
+    WHERE asignatura = $1 AND grado = $2 AND unidad = $3
+  `, [asignatura, Number(grado), Number(unidad)]);
+
+  return res({ ok: true, filas: rows });
+}
+
+// ============================================
+// POST: Eliminar quirúrgicamente una pregunta de un JSON
+// ============================================
+async function eliminarPreguntaBanco(body) {
+  const { row_id, index } = body;
+  if (!row_id || index === undefined) return resError('Faltan datos');
+
+  // 1. Obtenemos el JSON completo de esa fila
+  const rows = await query(`SELECT preguntas FROM banco_preguntas WHERE id = $1`, [row_id]);
+  if (rows.length === 0) return resError('Fila no encontrada');
+
+  let arrayPreguntas = rows[0].preguntas;
+
+  // 2. Eliminamos la pregunta específica del arreglo
+  arrayPreguntas.splice(index, 1);
+
+  // 3. Volvemos a guardar (Si el arreglo quedó vacío, borramos la fila entera para no dejar basura)
+  if (arrayPreguntas.length === 0) {
+    await query(`DELETE FROM banco_preguntas WHERE id = $1`, [row_id]);
+  } else {
+    await query(`UPDATE banco_preguntas SET preguntas = $1::jsonb WHERE id = $2`, [JSON.stringify(arrayPreguntas), row_id]);
+  }
+
+  return res({ ok: true });
+}
+// ============================================
+// POST: Editar JSON de una pregunta específica
+// ============================================
+async function editarPreguntaBanco(body) {
+  const { row_id, index, nueva_pregunta } = body;
+  if (!row_id || index === undefined || !nueva_pregunta) return resError('Faltan datos');
+
+  const rows = await query(`SELECT preguntas FROM banco_preguntas WHERE id = $1`, [row_id]);
+  if (rows.length === 0) return resError('Fila no encontrada');
+
+  let arrayPreguntas = rows[0].preguntas;
+  arrayPreguntas[index] = nueva_pregunta; // Reemplazamos la vieja por la nueva editada
+
+  await query(`UPDATE banco_preguntas SET preguntas = $1::jsonb WHERE id = $2`, [JSON.stringify(arrayPreguntas), row_id]);
+  return res({ ok: true });
+}
+
+// ============================================
+// POST: Guardar cambios de una evaluación editada
+// ============================================
+async function editarPruebaActiva(body) {
+  const { id, nombre, asignatura, grado, unidades, preguntas_por_intento, recompensa_monedas, recompensa_xp } = body;
+  if (!id) return resError('Falta ID de prueba');
+
+  await query(`
+    UPDATE pruebas_activas 
+    SET nombre = $1, asignatura = $2, grado = $3, unidades = $4, preguntas_por_intento = $5, recompensa_monedas = $6, recompensa_xp = $7, updated_at = now()
+    WHERE id = $8
+  `, [nombre, asignatura, Number(grado), unidades, Number(preguntas_por_intento), Number(recompensa_monedas), Number(recompensa_xp), id]);
+
+  return res({ ok: true });
+}
+
+async function getBancoFilas() {
+  const rows = await query(
+    `SELECT id, asignatura, grado, unidad, tema, created_at,
+            jsonb_array_length(preguntas) AS total_preguntas
+     FROM banco_preguntas
+     ORDER BY asignatura, grado, unidad, created_at ASC`
+  );
+  return res({ ok: true, filas: rows });
+}
+
+async function eliminarFilaBanco(body) {
+  const { row_id } = body;
+  if (!row_id) return resError('Falta row_id');
+  await query(`DELETE FROM banco_preguntas WHERE id = $1`, [row_id]);
+  return res({ ok: true });
+}
+
+async function eliminarPruebaActiva(body) {
+  const { id } = body;
+  if (!id) return resError('Falta id');
+  await query(`DELETE FROM pruebas_activas WHERE id = $1`, [id]);
+  return res({ ok: true });
 }
