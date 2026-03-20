@@ -1584,10 +1584,9 @@
       clearInterval(STATE.holdInterval);
       gid('entreCarrerasOverlay').classList.remove('active');
       var ganoPorVictorias = motivo === 'victoria';
-      
-      // Determinar si el jugador ganó algo (al menos 1 victoria o puntos > 0)
-      var gano = STATE.victorias > 0 || STATE.score > 0;
-      
+      var recompensa = Math.min(300,
+        SEL.coinsBase + STATE.victorias * 5 +
+        (ganoPorVictorias ? Math.floor(STATE.tiempoLeft * 0.5) : 0));
       var titulo;
       if (ganoPorVictorias)        titulo = '🏆 CAMPEON!';
       else if (STATE.victorias >= 3) titulo = '⭐ BIEN HECHO!';
@@ -1597,17 +1596,12 @@
       gid('resVictorias').textContent = STATE.victorias + '/' + VICTORIAS_META;
       gid('resPuntos').textContent    = STATE.score.toLocaleString('es-CL');
       gid('resMejorRacha').textContent = STATE.mejorRacha;
-      
-      // Mostrar "..." mientras espera respuesta del API
-      gid('resCoins').textContent     = gano ? '...' : '0';
-      gid('sessionCoins').textContent = gano ? '...' : '0';
+      gid('resCoins').textContent     = recompensa;
+      gid('sessionCoins').textContent = recompensa;
 
       // Ocultar widget nivel hasta recibir respuesta de la API
       gid('resNivelWrap').style.display = 'none';
       gid('resultadoOverlay').classList.add('active');
-
-      // Solo enviar a la API si el jugador ganó algo
-      if (!gano) return;
 
       var _sid = sessionStorage.getItem('juego_session_id');
       var _jid = sessionStorage.getItem('juego_id') || 'HorseRace';
@@ -1615,11 +1609,7 @@
       var _dur    = DURACION_TOTAL - STATE.tiempoLeft;
 
       getTokenLuego(function (_tok) {
-        if (!_tok) {
-          gid('resCoins').textContent = '0';
-          gid('sessionCoins').textContent = '0';
-          return;
-        }
+        if (!_tok) return;
         fetch('/api/juegos', {
           method: 'POST',
           headers: { 'Authorization': 'Bearer ' + _tok, 'Content-Type': 'application/json' },
@@ -1633,27 +1623,11 @@
         })
         .then(function (r) { return r.json(); })
         .then(function (data) {
-          if (!data.ok) {
-            gid('resCoins').textContent = '0';
-            gid('sessionCoins').textContent = '0';
-            return;
-          }
-
-          // Calcular total de monedas (etapa + bonus si aplica)
-          var totalMonedas = (data.monedas_ganadas || 0) + (data.bonus_monedas || 0);
-          var totalXp = (data.xp_ganado || 0) + (data.bonus_xp || 0);
-
-          // Actualizar modal con valores reales del API
-          gid('resCoins').textContent = totalMonedas;
-          gid('sessionCoins').textContent = totalMonedas;
+          if (!data.ok) return;
 
           // Toast de EduCoins y XP
           if (typeof toast === 'function') {
-            var msgToast = '+' + totalMonedas + ' EduCoins y +' + totalXp + ' XP 🎉';
-            if (data.bonus_monedas > 0) {
-              msgToast = '+' + data.monedas_ganadas + ' +' + data.bonus_monedas + ' bonus = ' + totalMonedas + ' EduCoins 🎉';
-            }
-            toast(msgToast, 'coins');
+            toast('+' + data.monedas_ganadas + ' EduCoins y +' + data.xp_ganado + ' XP 🎉', 'coins');
           }
 
           // Subida de nivel de EduCoins (no del juego)
@@ -1682,10 +1656,7 @@
           sessionStorage.removeItem('juego_id');
           sessionStorage.removeItem('juego_token');
         })
-        .catch(function () {
-          gid('resCoins').textContent = '0';
-          gid('sessionCoins').textContent = '0';
-        });
+        .catch(function () {});
       }); // fin getTokenLuego
     }
 
