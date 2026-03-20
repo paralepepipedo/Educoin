@@ -69,7 +69,7 @@
       });
     }
     renovarToken();
-    setInterval(renovarToken, 50000);
+    window._tokenRenewalInterval = setInterval(renovarToken, 50000);
 
     document.documentElement.style.visibility = 'visible';
     document.dispatchEvent(new CustomEvent('clerkReady', {
@@ -96,6 +96,18 @@
         // Feedback visual inmediato mientras Clerk procesa
         boton.style.opacity = '0.5';
         boton.style.pointerEvents = 'none';
+
+        // Detener renovación de token
+        if (window._tokenRenewalInterval) {
+          clearInterval(window._tokenRenewalInterval);
+          window._tokenRenewalInterval = null;
+        }
+
+        // Limpiar localStorage ANTES de cerrar sesión
+        try {
+          localStorage.removeItem('educoins_perfil_v1');
+        } catch (e) { }
+
         window.Clerk.signOut().then(function () {
           window.location.href = loginUrl;
         }).catch(function (err) {

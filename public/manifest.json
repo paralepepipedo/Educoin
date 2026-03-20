@@ -2,13 +2,28 @@
   "name": "EduCoins",
   "short_name": "EduCoins",
   "description": "Plataforma educativa con recompensas",
-  "start_url": "/",
+  "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#0f0f1a",
   "theme_color": "#7c3aed",
   "icons": [
-    { "src": "/icons/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/icons/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "/icons/apple-touch-icon.png",        "sizes": "180x180", "type": "image/png" }
+    { 
+      "src": "/icons/android-chrome-192x192.png", 
+      "sizes": "192x192", 
+      "type": "image/png",
+      "purpose": "any"
+    },
+    { 
+      "src": "/icons/android-chrome-512x512.png", 
+      "sizes": "512x512", 
+      "type": "image/png",
+      "purpose": "any"
+    },
+    { 
+      "src": "/icons/android-chrome-192x192.png", 
+      "sizes": "192x192", 
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }

@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Horario de Clases — John John High School</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Clerk SDK -->
+  <script data-clerk-publishable-key="pk_test_bG92aW5nLXJhcHRvci0xLmNsZXJrLmFjY291bnRzLmRldiQ"
+    src="https://lovable-raptor-1.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+    crossorigin="anonymous"></script>
+
+  <style>
+    /* ═══════════════════════════════════════════
+       VARIABLES
+    ═══════════════════════════════════════════ */
+    :root {
+      --navy:       #0a1628;
+      --navy2:      #0f1f3d;
+      --navy3:      #152647;
+      --navy4:      #1c3058;
+      --gold:       #c9a227;
+      --gold-l:     #e8c45a;
+      --gold-d:     #9a7a1c;
+      --gold-faint: rgba(201,162,39,.08);
+      --red:        #dc2626;
+      --red-l:      #fca5a5;
+      --orange:     #ea580c;
+      --orange-l:   #fdba74;
+      --green:      #16a34a;
+      --green-l:    #86efac;
+      --cyan:       #0891b2;
+      --cyan-l:     #67e8f9;
+      --text:       #e8edf5;
+      --text-dim:   #8fa4c8;
+      --text-mut:   #3d5478;
+      --border:     rgba(201,162,39,.18);
+      --border-b:   rgba(201,162,39,.28);
+      --r:          10px;
+      --r-lg:       16px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--navy);
+      color: var(--text);
+      min-height: 100vh;
+      background-image:
+        linear-gradient(rgba(201,162,39,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,162,39,.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    /* ═══════════════════════════════════════════
+       HEADER
+    ═══════════════════════════════════════════ */
+    .site-header {
+      background: var(--navy2);
+      border-bottom: 2px solid var(--gold);
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 62px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 4px 24px rgba(0,0,0,.4);
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-crest {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-d) 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+      border: 2px solid var(--gold-l);
+      box-shadow: 0 0 14px rgba(201,162,39,.35);
+    }
+
+    .logo-names { line-height: 1.25; }
+    .logo-school {
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      color: #fff;
+      font-weight: 700;
+      letter-spacing: .04em;
+    }
+    .logo-sub {
+      font-size: 10px;
+      color: var(--gold);
+      font-weight: 700;
+      letter-spacing: .06em;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .hb-urgent {
+      background: rgba(220,38,38,.18);
+      border: 1px solid rgba(220,38,38,.4);
+      color: var(--red-l);
+      animation: headerBadgePulse 2s ease-in-out infinite;
+    }
+    .hb-warn {
+      background: rgba(201,162,39,.14);
+      border: 1px solid rgba(201,162,39,.35);
+      color: var(--gold-l);
+    }
+    @keyframes headerBadgePulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(220,38,38,.3); }
+      50%      { box-shadow: 0 0 0 6px rgba(220,38,38,.0); }
+    }
+
+    /* ═══════════════════════════════════════════
+       BANNER DE URGENCIA (debajo del header)
+    ═══════════════════════════════════════════ */
+    #urgencyBanner {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 20px;
+      font-size: 12px;
+      font-weight: 700;
+      position: sticky;
+      top: 62px;
+      z-index: 49;
+    }
+    #urgencyBanner.level-critical {
+      display: flex;
+      background: #4a0808;
+      border-bottom: 1px solid rgba(220,38,38,.5);
+      animation: bannerPulse 2.5s ease-in-out infinite;
+    }
+    #urgencyBanner.level-warn {
+      display: flex;
+      background: #3a2800;
+      border-bottom: 1px solid rgba(201,162,39,.3);
+    }
+    @keyframes bannerPulse {
+      0%,100% { background: #4a0808; }
+      50%      { background: #600d0d; }
+    }
+    .banner-icon { font-size: 16px; flex-shrink: 0; }
+    .banner-text { flex: 1; color: var(--text); }
+    .banner-text span { color: var(--red-l); }
+    #urgencyBanner.level-warn .banner-text span { color: var(--gold-l); }
+    .banner-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+    .banner-pill {
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 10px;
+      font-weight: 800;
+    }
+    .bp-red  { background: rgba(220,38,38,.25); border: 1px solid rgba(220,38,38,.4); color: var(--red-l); }
+    .bp-gold { background: rgba(201,162,39,.18); border: 1px solid rgba(201,162,39,.35); color: var(--gold-l); }
+    .bp-ore  { background: rgba(234,88,12,.18); border: 1px solid rgba(234,88,12,.35); color: var(--orange-l); }
+    .banner-close {
+      background: none; border: none; color: var(--text-mut); font-size: 16px; cursor: pointer;
+      padding: 0 4px; margin-left: 8px; transition: color .15s; flex-shrink: 0;
+    }
+    .banner-close:hover { color: var(--text); }
+
+    /* ═══════════════════════════════════════════
+       MODAL RESUMEN SEMANAL
+    ═══════════════════════════════════════════ */
+    #weeklyModal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.82);
+      backdrop-filter: blur(6px);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    #weeklyModal.active { display: flex; }
+
+    .modal-card {
+      background: var(--navy2);
+      border: 1px solid var(--border-b);
+      border-radius: var(--r-lg);
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 0 80px rgba(201,162,39,.12), 0 24px 60px rgba(0,0,0,.6);
+      animation: modalIn .25s cubic-bezier(.34,1.56,.64,1);
+      overflow: hidden;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(.88) translateY(20px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, var(--navy3) 0%, #1e1006 100%);
+      border-bottom: 2px solid var(--gold);
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .modal-crest {
+      width: 48px; height: 48px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-d));
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+      border: 2px solid var(--gold-l);
+      box-shadow: 0 0 20px rgba(201,162,39,.4);
+      flex-shrink: 0;
+    }
+    .modal-title {
+      font-family: 'Cinzel', serif;
+      font-size: 15px;
+      color: #fff;
+      font-weight: 700;
+      letter-spacing: .03em;
+    }
+    .modal-subtitle { font-size: 11px; color: var(--gold); font-weight: 700; margin-top: 3px; }
+    .modal-close {
+      margin-left: auto;
+      background: none; border: none;
+      color: var(--text-mut); font-size: 18px; cursor: pointer;
+      transition: color .15s; padding: 4px; flex-shrink: 0;
+    }
+    .modal-close:hover { color: var(--text); }
+
+    .modal-body { padding: 20px; }
+    .modal-intro {
+      font-size: 13px; color: var(--text-dim);
+      font-weight: 700; margin-bottom: 16px;
+      padding: 10px 14px;
+      background: var(--gold-faint);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+    }
+
+    .modal-eval-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 14px;
+      border-radius: var(--r);
+      margin-bottom: 8px;
+      border: 1px solid transparent;
+      transition: background .15s;
+    }
+    .mei-critical { background: rgba(220,38,38,.08); border-color: rgba(220,38,38,.2); }
+    .mei-warn     { background: rgba(234,88,12,.07); border-color: rgba(234,88,12,.18); }
+    .mei-normal   { background: rgba(201,162,39,.06); border-color: var(--border); }
+
+    .mei-emoji { font-size: 24px; flex-shrink: 0; }
+    .mei-info { flex: 1; min-width: 0; }
+    .mei-asig {
+      font-family: 'Cinzel', serif;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: .04em; color: #fff;
+    }
+    .mei-fecha { font-size: 11px; color: var(--text-mut); font-weight: 700; margin-top: 2px; }
+    .mei-contenidos { font-size: 11px; color: var(--text-dim); font-weight: 700; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mei-dias {
+      font-family: 'Cinzel', serif;
+      font-size: 10px; font-weight: 600;
+      flex-shrink: 0; text-align: right;
+    }
+    .dias-critical { color: var(--red-l); }
+    .dias-warn     { color: var(--orange-l); }
+    .dias-normal   { color: var(--gold-l); }
+
+    .modal-footer {
+      padding: 0 20px 20px;
+      display: flex;
+      gap: 10px;
+    }
+    .modal-btn {
+      flex: 1;
+      padding: 11px;
+      border-radius: var(--r);
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      cursor: pointer;
+      transition: all .15s;
+      border: none;
+    }
+    .mbtn-primary {
+      background: linear-gradient(135deg, var(--gold), var(--gold-d));
+      color: var(--navy);
+      box-shadow: 0 4px 16px rgba(201,162,39,.3);
+    }
+    .mbtn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(201,162,39,.4); }
+    .mbtn-secondary {
+      background: transparent;
+      border: 1px solid var(--border-b);
+      color: var(--text-dim);
+    }
+    .mbtn-secondary:hover { background: rgba(255,255,255,.04); color: var(--text); }
+
+    /* ═══════════════════════════════════════════
+       TOASTS
+    ═══════════════════════════════════════════ */
+    #toastStack {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 300;
+      display: flex;
+      flex-direction: column-reverse;
+      gap: 8px;
+      max-width: 320px;
+    }
+    .toast-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: var(--navy2);
+      border-radius: var(--r);
+      padding: 12px 14px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.5);
+      border-left: 3px solid;
+      animation: toastSlide .3s cubic-bezier(.34,1.56,.64,1);
+      cursor: pointer;
+    }
+    @keyframes toastSlide {
+      from { opacity: 0; transform: translateX(40px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .toast-item.t-critical { border-color: var(--red); }
+    .toast-item.t-warn     { border-color: var(--orange); }
+    .toast-item.t-normal   { border-color: var(--gold); }
+    .toast-item.t-info     { border-color: var(--cyan); }
+
+    .toast-emoji { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .toast-body { flex: 1; min-width: 0; }
+    .toast-title { font-size: 12px; font-weight: 800; color: var(--text); }
+    .toast-desc  { font-size: 11px; color: var(--text-dim); font-weight: 700; margin-top: 2px; }
+    .toast-dias  { font-size: 10px; font-weight: 800; margin-top: 3px; }
+    .toast-close { background: none; border: none; color: var(--text-mut); font-size: 14px; cursor: pointer; padding: 0; flex-shrink: 0; transition: color .15s; }
+    .toast-close:hover { color: var(--text); }
+    .toast-progress {
+      height: 2px;
+      border-radius: 0 0 var(--r) 0;
+      position: absolute;
+      bottom: 0; left: 3px; right: 0;
+      transition: width linear;
+    }
+
+    /* ═══════════════════════════════════════════
+       LAYOUT PRINCIPAL
+    ═══════════════════════════════════════════ */
+    .page-wrap { max-width: 1100px; margin: 0 auto; padding: 24px 16px 48px; }
+
+    /* ═══════════════════════════════════════════
+       SELECTOR DE CURSO
+    ═══════════════════════════════════════════ */
+    .selector-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .sel-label {
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      color: var(--gold);
+      letter-spacing: .08em;
+      white-space: nowrap;
+    }
+    .sel-select {
+      background: var(--navy3);
+      border: 1px solid var(--border-b);
+      border-radius: var(--r);
+      color: var(--text);
+      font-family: 'Nunito', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 7px 12px;
+      cursor: pointer;
+      appearance: none;
+      min-width: 160px;
+      transition: border-color .15s;
+    }
+    .sel-select:focus { outline: none; border-color: var(--gold); }
+    .sel-btn {
+      padding: 7px 18px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-d));
+      border: none;
+      border-radius: var(--r);
+      color: var(--navy);
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      cursor: pointer;
+      transition: all .15s;
+      box-shadow: 0 4px 14px rgba(201,162,39,.3);
+    }
+    .sel-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(201,162,39,.4); }
+    .sel-btn:disabled { opacity: .4; pointer-events: none; }
+
+    /* ═══════════════════════════════════════════
+       TÍTULO DE SECCIÓN
+    ═══════════════════════════════════════════ */
+    .horario-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .horario-title {
+      font-family: 'Cinzel', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: .04em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .horario-title .gold-line {
+      display: inline-block;
+      width: 4px; height: 22px;
+      background: var(--gold);
+      border-radius: 2px;
+      box-shadow: 0 0 10px rgba(201,162,39,.5);
+    }
+    .horario-subtitle { font-size: 12px; color: var(--text-dim); font-weight: 700; margin-top: 3px; }
+
+    /* ═══════════════════════════════════════════
+       SEMANA NAV
+    ═══════════════════════════════════════════ */
+    .week-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .wbtn {
+      background: rgba(201,162,39,.1);
+      border: 1px solid var(--border-b);
+      border-radius: 8px;
+      padding: 5px 12px;
+      color: var(--gold);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .wbtn:hover { background: rgba(201,162,39,.2); }
+    .week-label {
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      color: #fff;
+      background: rgba(201,162,39,.08);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 5px 12px;
+      letter-spacing: .04em;
+    }
+    .week-badge {
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .wb-now  { background: rgba(22,163,74,.1); border: 1px solid rgba(22,163,74,.3); color: var(--green-l); }
+    .wb-next { background: rgba(201,162,39,.1); border: 1px solid var(--border); color: var(--gold-l); }
+    .wb-past { background: rgba(61,84,120,.15); border: 1px solid rgba(61,84,120,.3); color: var(--text-dim); }
+
+    /* ═══════════════════════════════════════════
+       TABLA
+    ═══════════════════════════════════════════ */
+    .table-wrap {
+      border-radius: var(--r-lg);
+      border: 1px solid var(--border-b);
+      overflow: hidden;
+      margin-bottom: 16px;
+      overflow-x: auto;
+      box-shadow: 0 4px 32px rgba(0,0,0,.3), inset 0 1px 0 rgba(201,162,39,.1);
+    }
+    table.schedule {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 580px;
+      background: var(--navy2);
+    }
+    table.schedule thead th {
+      background: var(--navy3);
+      padding: 8px 6px;
+      text-align: center;
+      border-bottom: 2px solid var(--gold);
+      font-family: 'Cinzel', serif;
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: .07em;
+      white-space: nowrap;
+    }
+    table.schedule thead th.th-today {
+      background: #0a1e10;
+      color: var(--cyan-l);
+      border-bottom-color: var(--cyan-l);
+    }
+    table.schedule thead th.th-hora {
+      color: var(--text-mut);
+      border-right: 2px solid var(--border-b);
+      min-width: 92px;
+    }
+    table.schedule tbody td {
+      padding: 5px 5px;
+      text-align: center;
+      border-bottom: 1px solid rgba(201,162,39,.06);
+      vertical-align: middle;
+    }
+    table.schedule tbody td.td-hora {
+      background: rgba(15,31,61,.7);
+      border-right: 2px solid var(--border-b);
+      font-size: 9px;
+      color: var(--text-mut);
+      font-weight: 700;
+      white-space: nowrap;
+      padding: 5px 8px;
+    }
+    table.schedule tbody tr:hover td:not(.td-hora):not(.td-special) {
+      background: rgba(201,162,39,.035);
+    }
+
+    /* Fila recreo/almuerzo */
+    .tr-recreo td, .tr-almuerzo td {
+      padding: 5px;
+      border-bottom: 1px solid rgba(8,145,178,.1);
+      background: rgba(8,145,178,.03);
+    }
+    .special-label {
+      font-family: 'Cinzel', serif;
+      font-size: 8px;
+      letter-spacing: .07em;
+      text-align: center;
+      color: var(--cyan-l);
+    }
+    .tr-almuerzo td { background: rgba(201,162,39,.025); border-bottom-color: rgba(201,162,39,.08); }
+    .tr-almuerzo .special-label { color: var(--gold); }
+
+    /* Pills de asignatura */
+    .asig-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      border-radius: 6px;
+      padding: 4px 7px;
+      font-size: 10px;
+      font-weight: 800;
+      width: 100%;
+      border: 1px solid transparent;
+      white-space: nowrap;
+      position: relative;
+      transition: all .15s;
+    }
+    /* Colores */
+    .ap-mat { background: rgba(59,130,246,.16); border-color: rgba(59,130,246,.3); color: #93c5fd; }
+    .ap-len { background: rgba(220,38,38,.14); border-color: rgba(220,38,38,.28); color: #fca5a5; }
+    .ap-his { background: rgba(201,162,39,.13); border-color: rgba(201,162,39,.28); color: #e8c45a; }
+    .ap-cie { background: rgba(22,163,74,.12); border-color: rgba(22,163,74,.28); color: #86efac; }
+    .ap-ing { background: rgba(234,88,12,.12); border-color: rgba(234,88,12,.28); color: #fdba74; }
+    .ap-ef  { background: rgba(8,145,178,.12); border-color: rgba(8,145,178,.28); color: var(--cyan-l); }
+    .ap-mus { background: rgba(147,51,234,.12); border-color: rgba(147,51,234,.28); color: #d8b4fe; }
+    .ap-art { background: rgba(236,72,153,.12); border-color: rgba(236,72,153,.28); color: #f9a8d4; }
+    .ap-tec { background: rgba(100,116,139,.12); border-color: rgba(100,116,139,.28); color: #cbd5e1; }
+    .ap-ori { background: rgba(20,184,166,.12); border-color: rgba(20,184,166,.28); color: #5eead4; }
+    .ap-ec  { background: rgba(251,191,36,.12); border-color: rgba(251,191,36,.28); color: #fcd34d; }
+    .ap-av  { background: rgba(244,114,182,.12); border-color: rgba(244,114,182,.28); color: #f9a8d4; }
+    .ap-lib { background: rgba(71,85,105,.1); border-color: rgba(71,85,105,.25); color: #94a3b8; }
+
+    /* Pill con evaluación próxima */
+    .asig-pill.has-eval {
+      animation: evalGlow 2.2s ease-in-out infinite;
+      border-color: var(--gold) !important;
+      cursor: pointer;
+    }
+    @keyframes evalGlow {
+      0%,100% { box-shadow: 0 0 5px rgba(201,162,39,.2); }
+      50%      { box-shadow: 0 0 18px rgba(201,162,39,.7), 0 0 32px rgba(201,162,39,.15); }
+    }
+    .eval-star {
+      display: inline-block;
+      width: 5px; height: 5px;
+      background: var(--gold);
+      border-radius: 50%;
+      box-shadow: 0 0 6px var(--gold);
+      flex-shrink: 0;
+    }
+
+    /* ═══════════════════════════════════════════
+       PANEL EVALUACIONES
+    ═══════════════════════════════════════════ */
+    .evals-section {
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      margin-bottom: 32px;
+    }
+    .evals-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(201,162,39,.06);
+      border: none;
+      padding: 13px 18px;
+      cursor: pointer;
+      color: var(--text);
+      transition: background .15s;
+    }
+    .evals-toggle:hover { background: rgba(201,162,39,.1); }
+    .evals-toggle-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      color: var(--gold);
+      letter-spacing: .05em;
+    }
+    .evals-count {
+      background: rgba(201,162,39,.15);
+      border: 1px solid var(--border-b);
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 11px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      color: var(--gold-l);
+    }
+    .evals-chevron { color: var(--gold); font-size: 14px; transition: transform .25s; }
+    .evals-chevron.open { transform: rotate(180deg); }
+
+    .evals-body { display: none; }
+    .evals-body.open { display: block; }
+
+    .eval-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 18px;
+      border-top: 1px solid rgba(201,162,39,.08);
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .eval-row:hover { background: rgba(201,162,39,.04); }
+    .er-emoji { font-size: 20px; flex-shrink: 0; }
+    .er-info { flex: 1; min-width: 0; }
+    .er-asig {
+      font-family: 'Cinzel', serif;
+      font-size: 10px; font-weight: 600;
+      letter-spacing: .04em; color: #fff;
+    }
+    .er-fecha { font-size: 11px; color: var(--text-mut); font-weight: 700; margin-top: 2px; }
+    .er-cont  { font-size: 11px; color: var(--text-dim); font-weight: 700; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .er-right { text-align: right; flex-shrink: 0; }
+    .er-dias {
+      font-family: 'Cinzel', serif;
+      font-size: 9px; font-weight: 600; letter-spacing: .04em;
+      margin-bottom: 4px;
+    }
+    .er-estado {
+      font-size: 10px; font-weight: 800;
+      border-radius: 20px; padding: 2px 8px;
+      display: inline-block;
+    }
+    .es-pendiente { background: rgba(100,116,139,.15); color: var(--text-dim); }
+    .es-estudiado { background: rgba(22,163,74,.1);   color: var(--green-l); }
+    .es-rendida   { background: rgba(201,162,39,.1);  color: var(--gold-l); }
+
+    /* ═══════════════════════════════════════════
+       POPUP EVAL (click en celda)
+    ═══════════════════════════════════════════ */
+    #evalPopup {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.78);
+      backdrop-filter: blur(5px);
+      display: none; align-items: center; justify-content: center;
+      z-index: 250; padding: 16px;
+    }
+    #evalPopup.active { display: flex; }
+    .popup-card {
+      background: var(--navy2);
+      border: 1px solid var(--border-b);
+      border-radius: var(--r-lg);
+      padding: 22px;
+      max-width: 380px;
+      width: 100%;
+      box-shadow: 0 0 70px rgba(201,162,39,.14);
+      animation: modalIn .2s ease;
+    }
+    .popup-hd { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .popup-emoji { font-size: 28px; }
+    .popup-asig { font-family: 'Cinzel', serif; font-size: 13px; font-weight: 700; color: #fff; }
+    .popup-fecha { font-size: 11px; color: var(--text-mut); font-weight: 700; margin-top: 3px; }
+    .popup-close { margin-left: auto; background: none; border: none; color: var(--text-mut); font-size: 18px; cursor: pointer; }
+    .popup-cont {
+      background: rgba(201,162,39,.06); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 12px; font-size: 13px;
+      color: #c8d4e6; font-weight: 700; line-height: 1.6; margin-bottom: 12px;
+    }
+    .popup-dias-row {
+      font-family: 'Cinzel', serif; font-size: 11px; font-weight: 600;
+      margin-bottom: 14px; letter-spacing: .04em;
+    }
+    .popup-actions { display: flex; gap: 8px; }
+    .popup-btn {
+      flex: 1; padding: 9px; border-radius: var(--r);
+      font-family: 'Cinzel', serif; font-size: 9px; font-weight: 700;
+      letter-spacing: .05em; cursor: pointer; border: none; transition: all .15s;
+    }
+    .pbtn-primary { background: linear-gradient(135deg, var(--gold), var(--gold-d)); color: var(--navy); }
+    .pbtn-secondary { background: transparent; border: 1px solid var(--border-b); color: var(--text-dim); }
+
+    /* ═══════════════════════════════════════════
+       SPINNER / ESTADO VACÍO
+    ═══════════════════════════════════════════ */
+    .spinner-wrap {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 12px; padding: 40px; color: var(--text-dim); font-size: 13px; font-weight: 700;
+    }
+    .spinner {
+      width: 32px; height: 32px;
+      border: 3px solid rgba(201,162,39,.15);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .empty-state {
+      text-align: center; padding: 32px;
+      color: var(--text-mut); font-size: 13px; font-weight: 700;
+    }
+
+    /* ═══════════════════════════════════════════
+       LEYENDA
+    ═══════════════════════════════════════════ */
+    .legend {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;
+    }
+    .legend-item {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 700; color: var(--text-dim);
+    }
+    .legend-dot {
+      width: 8px; height: 8px; border-radius: 3px; flex-shrink: 0;
+    }
+
+    /* ═══════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════ */
+    @media (max-width: 600px) {
+      .logo-school { font-size: 11px; }
+      .logo-crest  { width: 34px; height: 34px; font-size: 16px; }
+      .horario-title { font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════ HEADER ═══════════════ -->
+  <header class="site-header">
+    <div class="header-logo">
+      <div class="logo-crest">🏛️</div>
+      <div class="logo-names">
+        <div class="logo-school">JOHN JOHN HIGH SCHOOL</div>
+        <div class="logo-sub">HORARIO DE CLASES</div>
+      </div>
+    </div>
+    <div class="header-right" id="headerBadges"></div>
+  </header>
+
+  <!-- ═══════════════ BANNER URGENCIA ═══════════════ -->
+  <div id="urgencyBanner">
+    <span class="banner-icon">🔔</span>
+    <span class="banner-text" id="bannerText">Tienes evaluaciones próximas</span>
+    <div class="banner-pills" id="bannerPills"></div>
+    <button class="banner-close" onclick="document.getElementById('urgencyBanner').style.display='none'">✕</button>
+  </div>
+
+  <!-- ═══════════════ MODAL SEMANAL ═══════════════ -->
+  <div id="weeklyModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-crest">📋</div>
+        <div>
+          <div class="modal-title">Evaluaciones de la Semana</div>
+          <div class="modal-subtitle" id="modalWeekRange">—</div>
+        </div>
+        <button class="modal-close" onclick="closeWeeklyModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-intro" id="modalIntro">Resumen de evaluaciones próximas:</div>
+        <div id="modalEvalList"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn mbtn-primary" onclick="closeWeeklyModal()">Ver Horario →</button>
+        <button class="modal-btn mbtn-secondary" onclick="closeWeeklyModal(true)">No mostrar hoy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ POPUP EVALUACIÓN ═══════════════ -->
+  <div id="evalPopup">
+    <div class="popup-card">
+      <div class="popup-hd">
+        <span class="popup-emoji" id="ppEmoji">📚</span>
+        <div>
+          <div class="popup-asig" id="ppAsig">—</div>
+          <div class="popup-fecha" id="ppFecha">—</div>
+        </div>
+        <button class="popup-close" onclick="closePopup()">✕</button>
+      </div>
+      <div class="popup-cont" id="ppCont">—</div>
+      <div class="popup-dias-row" id="ppDias"></div>
+      <div class="popup-actions">
+        <button class="popup-btn pbtn-secondary" onclick="closePopup()">CERRAR</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ TOASTS ═══════════════ -->
+  <div id="toastStack"></div>
+
+  <!-- ═══════════════ CONTENIDO PRINCIPAL ═══════════════ -->
+  <div class="page-wrap">
+
+    <!-- Selector oculto — colegio y grado fijos por configuración -->
+    <div id="selectorBar" style="display:none">
+      <select id="selColegio"></select>
+      <select id="selGrado"></select>
+      <button id="btnCargar"></button>
+    </div>
+
+    <!-- Título horario -->
+    <div class="horario-header" id="horarioHeader" style="display:none">
+      <div>
+        <div class="horario-title">
+          <span class="gold-line"></span>
+          <span id="horarioTitleText">Horario de Clases</span>
+        </div>
+        <div class="horario-subtitle" id="horarioSubtitle">—</div>
+      </div>
+    </div>
+
+    <!-- Navegación semana -->
+    <div class="week-nav" id="weekNav" style="display:none">
+      <button class="wbtn" onclick="changeSemana(-1)">‹</button>
+      <div class="week-label" id="weekLabel">—</div>
+      <button class="wbtn" onclick="changeSemana(1)">›</button>
+      <button class="wbtn" style="font-size:11px;font-weight:800;color:var(--cyan-l);border-color:rgba(8,145,178,.3)" onclick="STATE.semanaOffset=0;refreshAll()">Hoy</button>
+      <span class="week-badge wb-now" id="weekBadge"></span>
+    </div>
+
+    <!-- Tabla horario -->
+    <div id="tableContainer">
+      <div class="spinner-wrap" style="display:none" id="tableSpinner">
+        <div class="spinner"></div>
+        Cargando horario...
+      </div>
+    </div>
+
+    <!-- Leyenda -->
+    <div class="legend" id="legend" style="display:none"></div>
+
+    <!-- Evaluaciones pendientes -->
+    <div class="evals-section" id="evalsSection" style="display:none">
+      <button class="evals-toggle" onclick="toggleEvalsPanel()">
+        <div class="evals-toggle-left">
+          📋 EVALUACIONES PENDIENTES
+          <span class="evals-count" id="evalsCount">0</span>
+        </div>
+        <span class="evals-chevron" id="evalsChevron">▾</span>
+      </button>
+      <div class="evals-body" id="evalsBody"></div>
+    </div>
+
+  </div><!-- /page-wrap -->
+
+  <!-- sin dependencias externas de EduCoins -->
+
+  <script>
+  /* ═══════════════════════════════════════════════════
+     CONFIGURACIÓN
+  ═══════════════════════════════════════════════════ */
+  var BASE_URL    = 'https://educoin-lilac.vercel.app';
+
+  // ── Configuración fija para esta página pública ──
+  var COLEGIO_ID_FIJO  = '8b14d518-332f-4fea-b78f-df6335c77842';
+  var COLEGIO_NOMBRE_FIJO = 'John John High School';
+  var GRADO_FIJO       = 5;
+
+  var HARDCODED_USER  = 'HorarioUser';
+  var HARDCODED_PASS  = 'HorarioUser2026';
+
+  var DIAS       = ['','Lunes','Martes','Miércoles','Jueves','Viernes'];
+  var DIAS_SHORT = ['','LUN','MAR','MIÉ','JUE','VIE'];
+
+  var FILAS_ESPECIALES = [
+    { despuesDeBloque: 2, tipo: 'recreo',  label: '☕ RECREO 1',  hora_lj: '09:30–09:55', hora_v: '09:30–09:45' },
+    { despuesDeBloque: 4, tipo: 'recreo',  label: '☕ RECREO 2',  hora_lj: '11:25–11:45', hora_v: '11:15–11:30' },
+    { despuesDeBloque: 6, tipo: 'almuerzo',label: '🍽 ALMUERZO',  hora_lj: '13:15–14:00', hora_v: '' },
+  ];
+
+  var ASIG_CONFIG = {
+    'Matematicas':     { emoji:'➗', css:'ap-mat', color:'#3b82f6' },
+    'Lenguaje':        { emoji:'📖', css:'ap-len', color:'#ef4444' },
+    'Historia':        { emoji:'🏛', css:'ap-his', color:'#c9a227' },
+    'Ciencias':        { emoji:'🔬', css:'ap-cie', color:'#22c55e' },
+    'Ingles':          { emoji:'🇬🇧', css:'ap-ing', color:'#f97316' },
+    'Ed. Fisica':      { emoji:'⚽', css:'ap-ef',  color:'#0891b2' },
+    'Musica':          { emoji:'🎵', css:'ap-mus', color:'#a855f7' },
+    'Artes':           { emoji:'🎨', css:'ap-art', color:'#ec4899' },
+    'Tecnologia':      { emoji:'💻', css:'ap-tec', color:'#64748b' },
+    'Orientacion':     { emoji:'🧭', css:'ap-ori', color:'#14b8a6' },
+    'Educ. Cristiana': { emoji:'✝️', css:'ap-ec',  color:'#fbbf24' },
+    'Artes Visuales':  { emoji:'🖼', css:'ap-av',  color:'#f472b6' },
+    'Libre':           { emoji:'📋', css:'ap-lib', color:'#475569' },
+  };
+
+  /* ═══════════════════════════════════════════════════
+     ESTADO GLOBAL
+  ═══════════════════════════════════════════════════ */
+  var STATE = {
+    token:        null,
+    colegioId:    COLEGIO_ID_FIJO,
+    colegioNombre: COLEGIO_NOMBRE_FIJO,
+    grado:        GRADO_FIJO,
+    matriz:       {},
+    bloques:      [],
+    evaluaciones: [],
+    semanaOffset: 0,
+    semanaEvals:  {},
+    popupEval:    null,
+  };
+
+  /* ═══════════════════════════════════════════════════
+     INIT
+  ═══════════════════════════════════════════════════ */
+  document.addEventListener('DOMContentLoaded', function() {
+    // Eventos globales
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closePopup(); closeWeeklyModal(); } });
+    document.getElementById('evalPopup').addEventListener('click', function(e){ if(e.target===this) closePopup(); });
+    document.getElementById('weeklyModal').addEventListener('click', function(e){ if(e.target===this) closeWeeklyModal(); });
+
+    // Mostrar estado de carga inmediato
+    document.getElementById('horarioHeader').style.display = 'flex';
+    document.getElementById('weekNav').style.display = 'flex';
+    document.getElementById('horarioTitleText').textContent = 'Horario de Clases';
+    document.getElementById('horarioSubtitle').textContent = COLEGIO_NOMBRE_FIJO + ' · ' + GRADO_FIJO + '° Básico';
+    document.getElementById('tableContainer').innerHTML =
+      '<div class="spinner-wrap"><div class="spinner"></div>Cargando horario...</div>';
+    actualizarWeekLabel();
+
+    // Autenticar y luego cargar datos
+    autenticar(function() {
+      cargarEvaluaciones(function() {
+        cargarHorario(COLEGIO_ID_FIJO, GRADO_FIJO);
+      });
+    });
+  });
+
+  /* ═══════════════════════════════════════════════════
+     AUTENTICACIÓN HARDCODEADA
+     Usa signInWithEmailPassword de Clerk o fallback a fetch directo
+  ═══════════════════════════════════════════════════ */
+  function autenticar(callback) {
+    callback = callback || function(){};
+    var intentos = 0;
+    var check = setInterval(function() {
+      intentos++;
+      if (window.Clerk && window.Clerk.client !== undefined) {
+        clearInterval(check);
+        doSignIn(callback);
+      } else if (intentos > 40) {
+        clearInterval(check);
+        console.warn('[horario-pub] Clerk no disponible, continuando sin auth');
+        callback();
+      }
+    }, 150);
+  }
+
+  function doSignIn(callback) {
+    callback = callback || function(){};
+    if (!window.Clerk) { callback(); return; }
+    Clerk.load().then(function() {
+      if (Clerk.session) {
+        return Clerk.session.getToken();
+      }
+      return Clerk.client.signIn.create({
+        identifier: HARDCODED_USER,
+        password:   HARDCODED_PASS,
+      }).then(function(result) {
+        if (result.status === 'complete') {
+          return Clerk.setActive({ session: result.createdSessionId });
+        }
+      }).then(function() {
+        return Clerk.session ? Clerk.session.getToken() : null;
+      });
+    }).then(function(token) {
+      if (token) {
+        STATE.token = token;
+        console.log('[horario-pub] Autenticado correctamente');
+      }
+      callback();
+    }).catch(function(err) {
+      console.warn('[horario-pub] Sign in falló:', err);
+      callback();
+    });
+  }
+
+  function getToken() {
+    if (window.Clerk && Clerk.session) {
+      return Clerk.session.getToken();
+    }
+    return Promise.resolve(STATE.token);
+  }
+
+  /* funciones de selector eliminadas — colegio y grado son fijos */
+
+  /* ═══════════════════════════════════════════════════
+     EVALUACIONES
+  ═══════════════════════════════════════════════════ */
+  function cargarEvaluaciones(cb) {
+    if (!STATE.colegioId || !STATE.grado) { cb(); return; }
+    var url = BASE_URL + '/api/evaluaciones?colegio_id=' + STATE.colegioId + '&grado=' + STATE.grado;
+
+    getToken().then(function(token) {
+      var headers = {};
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+
+      fetch(url, { credentials: 'include', headers: headers })
+        .then(function(r){ return r.ok ? r.json() : null; })
+        .then(function(data) {
+          if (data && data.evaluaciones) {
+            var hoy = new Date(); hoy.setHours(0,0,0,0);
+            STATE.evaluaciones = data.evaluaciones
+              .map(function(e){ e.fecha_evaluacion = e.fecha_evaluacion.substring(0,10); return e; })
+              .filter(function(e){
+                return new Date(e.fecha_evaluacion + 'T00:00:00') >= hoy && e.estado !== 'nota_ingresada';
+              });
+          }
+          cb();
+        })
+        .catch(function(){ cb(); });
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════
+     HORARIO
+  ═══════════════════════════════════════════════════ */
+  function cargarHorario(colegioId, grado) {
+    document.getElementById('tableContainer').innerHTML =
+      '<div class="spinner-wrap"><div class="spinner"></div>Cargando horario...</div>';
+    document.getElementById('horarioHeader').style.display = 'flex';
+    document.getElementById('weekNav').style.display = 'flex';
+
+    fetch(BASE_URL + '/api/horario?colegio_id=' + colegioId + '&grado=' + grado)
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(data) {
+        if (!data) {
+          document.getElementById('tableContainer').innerHTML =
+            '<div class="empty-state">❌ Error al cargar el horario. Intenta nuevamente.</div>';
+          return;
+        }
+        STATE.colegioNombre = data.colegio.nombre;
+        STATE.matriz        = data.matriz;
+        STATE.bloques       = data.bloques;
+        STATE.grado         = data.grado;
+
+        document.getElementById('horarioTitleText').textContent = 'Horario de Clases';
+        document.getElementById('horarioSubtitle').textContent =
+          data.colegio.nombre + ' · ' + data.grado + '° Básico';
+
+        calcularSemanaEvals();
+        refreshAll();
+        renderLeyenda();
+        renderEvalsPanel();
+
+        // Sistema de notificaciones
+        mostrarNotificaciones();
+      })
+      .catch(function(err) {
+        console.error('[horario-pub]', err);
+        document.getElementById('tableContainer').innerHTML =
+          '<div class="empty-state">❌ Error de conexión. Verifica tu conexión a internet.</div>';
+      });
+  }
+
+  /* ═══════════════════════════════════════════════════
+     SEMANA
+  ═══════════════════════════════════════════════════ */
+  function getLunesSemana(offset) {
+    var hoy = new Date();
+    var dia = hoy.getDay();
+    var diff = dia === 0 ? -6 : 1 - dia;
+    var lunes = new Date(hoy);
+    lunes.setDate(hoy.getDate() + diff + (offset * 7));
+    lunes.setHours(0,0,0,0);
+    return lunes;
+  }
+
+  function calcularSemanaEvals() {
+    var lunes   = getLunesSemana(STATE.semanaOffset);
+    var viernes = new Date(lunes); viernes.setDate(viernes.getDate() + 4);
+
+    var evs = STATE.evaluaciones.filter(function(e) {
+      var f = new Date(e.fecha_evaluacion + 'T00:00:00');
+      return f >= lunes && f <= viernes;
+    });
+
+    STATE.semanaEvals = {};
+    evs.forEach(function(e) {
+      if (!STATE.semanaEvals[e.asignatura]) STATE.semanaEvals[e.asignatura] = [];
+      STATE.semanaEvals[e.asignatura].push(e);
+    });
+  }
+
+  function changeSemana(delta) {
+    STATE.semanaOffset += delta;
+    calcularSemanaEvals();
+    refreshAll();
+  }
+
+  function refreshAll() {
+    actualizarWeekLabel();
+    renderTabla();
+  }
+
+  function actualizarWeekLabel() {
+    var lunes   = getLunesSemana(STATE.semanaOffset);
+    var viernes = new Date(lunes); viernes.setDate(lunes.getDate() + 4);
+    var opts    = { day: 'numeric', month: 'short' };
+    document.getElementById('weekLabel').textContent =
+      lunes.toLocaleDateString('es-CL', opts) + ' — ' +
+      viernes.toLocaleDateString('es-CL', { day: 'numeric', month: 'short', year: 'numeric' });
+
+    var badge = document.getElementById('weekBadge');
+    if (STATE.semanaOffset === 0) {
+      badge.className = 'week-badge wb-now';
+      badge.textContent = '✅ Semana actual';
+    } else if (STATE.semanaOffset > 0) {
+      badge.className = 'week-badge wb-next';
+      badge.textContent = STATE.semanaOffset === 1 ? '⏭ Próxima semana' : 'En ' + STATE.semanaOffset + ' semanas';
+    } else {
+      badge.className = 'week-badge wb-past';
+      badge.textContent = 'Hace ' + Math.abs(STATE.semanaOffset) + ' semana' + (Math.abs(STATE.semanaOffset)>1?'s':'');
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════
+     RENDER TABLA
+  ═══════════════════════════════════════════════════ */
+  function renderTabla() {
+    var hoy    = new Date();
+    var diaHoy = hoy.getDay();
+    var lunes  = getLunesSemana(STATE.semanaOffset);
+
+    // THEAD
+    var thead = '<thead><tr><th class="th-hora">HORARIO L–J</th>';
+    for (var d = 1; d <= 5; d++) {
+      var fecha = new Date(lunes); fecha.setDate(lunes.getDate() + (d-1));
+      var esHoy = STATE.semanaOffset === 0 && d === diaHoy;
+      thead += '<th' + (esHoy ? ' class="th-today"' : '') + '>' +
+        DIAS_SHORT[d] + (esHoy ? ' ★' : '') +
+        '<br><span style="font-family:Nunito,sans-serif;font-size:9px;font-weight:700;color:' +
+        (esHoy ? 'var(--cyan-l)' : 'var(--text-mut)') + '">' +
+        fecha.getDate() + '/' + (fecha.getMonth()+1) + '</span></th>';
+    }
+    thead += '</tr></thead>';
+
+    // TBODY
+    var tbody = '<tbody>';
+    for (var blq = 1; blq <= 8; blq++) {
+      var esp = FILAS_ESPECIALES.find(function(f){ return f.despuesDeBloque === blq-1; });
+      if (esp) tbody += renderFilaEspecial(esp);
+      tbody += renderFilaBloque(blq, diaHoy);
+    }
+    tbody += '</tbody>';
+
+    var html = '<div class="table-wrap"><table class="schedule">' + thead + tbody + '</table></div>';
+    document.getElementById('tableContainer').innerHTML = html;
+
+    // Eventos click en celdas con evaluación
+    document.querySelectorAll('.asig-pill.has-eval').forEach(function(el) {
+      el.addEventListener('click', function() {
+        var asig = this.dataset.asig;
+        if (asig && STATE.semanaEvals[asig] && STATE.semanaEvals[asig].length) {
+          abrirPopup(STATE.semanaEvals[asig][0]);
+        }
+      });
+    });
+  }
+
+  function renderFilaEspecial(esp) {
+    var tipo = esp.tipo;
+    var cls  = tipo === 'recreo' ? 'tr-recreo' : 'tr-almuerzo';
+    return '<tr class="' + cls + '">' +
+      '<td class="td-hora td-special" style="font-size:9px;color:' +
+      (tipo==='recreo'?'var(--cyan-l)':'var(--gold)') + '">' + esp.hora_lj + '</td>' +
+      '<td colspan="5"><div class="special-label">' + esp.label + '</div></td>' +
+      '</tr>';
+  }
+
+  function renderFilaBloque(blq, diaHoy) {
+    var cfg    = STATE.bloques.find(function(b){ return b.bloque === blq; }) || {};
+    var horaLJ = cfg.hora_lj || '';
+    var html   = '<tr><td class="td-hora">' + horaLJ + '</td>';
+
+    for (var d = 1; d <= 5; d++) {
+      var asig = (STATE.matriz[d] && STATE.matriz[d][blq]) || null;
+      html += renderCelda(d, blq, asig, diaHoy);
+    }
+    html += '</tr>';
+    return html;
+  }
+
+  function renderCelda(dia, blq, asig, diaHoy) {
+    var cfg      = asig ? (ASIG_CONFIG[asig] || { emoji:'📋', css:'ap-lib', color:'#475569' }) : null;
+    var tieneEval= asig && STATE.semanaEvals[asig] && STATE.semanaEvals[asig].length > 0;
+    var esHoy    = STATE.semanaOffset === 0 && dia === diaHoy;
+
+    var style = esHoy ? ' style="background:rgba(8,145,178,.04)"' : '';
+    var html  = '<td' + style + '>';
+
+    if (cfg) {
+      html += '<div class="asig-pill ' + cfg.css + (tieneEval ? ' has-eval' : '') + '"' +
+        (tieneEval ? ' data-asig="' + asig + '" title="Tiene evaluación próxima"' : '') + '>' +
+        (tieneEval ? '<span class="eval-star"></span>' : '') +
+        cfg.emoji + ' ' + asig.replace('Ed. Fisica','Ed.Física') +
+        '</div>';
+    }
+    html += '</td>';
+    return html;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     LEYENDA
+  ═══════════════════════════════════════════════════ */
+  function renderLeyenda() {
+    var html = '';
+    Object.keys(ASIG_CONFIG).forEach(function(a) {
+      var c = ASIG_CONFIG[a];
+      html += '<div class="legend-item">' +
+        '<div class="legend-dot" style="background:' + c.color + '"></div>' +
+        a.replace('Ed. Fisica','Ed.Física') + '</div>';
+    });
+    html += '<div class="legend-item" style="color:var(--gold)">' +
+      '<div class="legend-dot" style="background:var(--gold);box-shadow:0 0 5px var(--gold)"></div>' +
+      'Con evaluación próxima</div>';
+    document.getElementById('legend').innerHTML = html;
+    document.getElementById('legend').style.display = 'flex';
+  }
+
+  /* ═══════════════════════════════════════════════════
+     PANEL EVALUACIONES
+  ═══════════════════════════════════════════════════ */
+  function renderEvalsPanel() {
+    var section = document.getElementById('evalsSection');
+    if (!STATE.evaluaciones.length) { section.style.display = 'none'; return; }
+
+    var sorted = STATE.evaluaciones.slice().sort(function(a,b){
+      return new Date(a.fecha_evaluacion) - new Date(b.fecha_evaluacion);
+    });
+    document.getElementById('evalsCount').textContent = sorted.length + ' pendiente' + (sorted.length!==1?'s':'');
+    section.style.display = 'block';
+
+    var html = '';
+    sorted.forEach(function(e) {
+      var cfg  = ASIG_CONFIG[e.asignatura] || { emoji:'📚', color:'#94a3b8' };
+      var dias = diasRestantes(e.fecha_evaluacion);
+      var diasTxt, diasCls;
+      if (dias===0)       { diasTxt='🚨 HOY';            diasCls='dias-critical'; }
+      else if (dias===1)  { diasTxt='⚠ MAÑANA';         diasCls='dias-critical'; }
+      else if (dias<=3)   { diasTxt='EN '+dias+' DÍAS';  diasCls='dias-warn'; }
+      else                { diasTxt='EN '+dias+' DÍAS';  diasCls='dias-normal'; }
+      var eLabels = { pendiente:'⏳ Pendiente', estudiado:'📖 Estudiando', rendida:'✏️ Rendida' };
+
+      html += '<div class="eval-row" onclick="abrirPopup(' + JSON.stringify(e).replace(/'/g,"\\'") + ')">' +
+        '<span class="er-emoji">' + cfg.emoji + '</span>' +
+        '<div class="er-info">' +
+          '<div class="er-asig" style="color:' + cfg.color + '">' + e.asignatura.toUpperCase() + '</div>' +
+          '<div class="er-fecha">📅 ' + formatFecha(e.fecha_evaluacion) + '</div>' +
+          (e.contenidos ? '<div class="er-cont">📝 ' + e.contenidos + '</div>' : '') +
+        '</div>' +
+        '<div class="er-right">' +
+          '<div class="er-dias ' + diasCls + '">' + diasTxt + '</div>' +
+          '<span class="er-estado es-' + e.estado + '">' + (eLabels[e.estado]||e.estado) + '</span>' +
+        '</div>' +
+        '</div>';
+    });
+    document.getElementById('evalsBody').innerHTML = html || '<div class="empty-state">🎉 Sin evaluaciones pendientes</div>';
+  }
+
+  function toggleEvalsPanel() {
+    var body    = document.getElementById('evalsBody');
+    var chevron = document.getElementById('evalsChevron');
+    var open    = body.classList.contains('open');
+    body.classList.toggle('open', !open);
+    chevron.classList.toggle('open', !open);
+  }
+
+  /* ═══════════════════════════════════════════════════
+     POPUP DE EVALUACIÓN
+  ═══════════════════════════════════════════════════ */
+  function abrirPopup(ev) {
+    var cfg  = ASIG_CONFIG[ev.asignatura] || { emoji:'📚' };
+    var dias = diasRestantes(ev.fecha_evaluacion);
+    var diasTxt;
+    if (dias===0)      diasTxt = '🚨 ¡ES HOY!';
+    else if (dias===1) diasTxt = '⚠️ ¡ES MAÑANA!';
+    else               diasTxt = '📅 En ' + dias + ' días';
+
+    document.getElementById('ppEmoji').textContent   = cfg.emoji;
+    document.getElementById('ppAsig').textContent    = ev.asignatura.toUpperCase();
+    document.getElementById('ppFecha').textContent   = '📅 ' + formatFecha(ev.fecha_evaluacion);
+    document.getElementById('ppCont').textContent    = ev.contenidos || 'Sin contenidos especificados';
+    document.getElementById('ppDias').textContent    = diasTxt;
+    document.getElementById('ppDias').className      = 'popup-dias-row ' +
+      (dias<=1 ? 'dias-critical' : dias<=3 ? 'dias-warn' : 'dias-normal');
+    document.getElementById('evalPopup').classList.add('active');
+  }
+
+  function closePopup() {
+    document.getElementById('evalPopup').classList.remove('active');
+  }
+
+  /* ═══════════════════════════════════════════════════
+     ══════════════  SISTEMA DE NOTIFICACIONES  ═══════
+     ═══════════════════════════════════════════════════
+     Capas:
+       1. Header badges (siempre visible)
+       2. Banner persistente (≤6 días)
+       3. Modal resumen semanal (1 vez por día)
+       4. Toasts individuales (al cargar)
+     Los resaltes en tabla ya están en renderCelda().
+  ═══════════════════════════════════════════════════ */
+  function mostrarNotificaciones() {
+    if (!STATE.evaluaciones.length) return;
+
+    var hoy     = new Date(); hoy.setHours(0,0,0,0);
+    var en7dias = new Date(hoy); en7dias.setDate(hoy.getDate() + 7);
+    var en3dias = new Date(hoy); en3dias.setDate(hoy.getDate() + 3);
+
+    // Clasificar evaluaciones por urgencia
+    var criticas = [];  // hoy o mañana
+    var pronto   = [];  // 2-3 días
+    var normales = [];  // 4-7 días
+
+    STATE.evaluaciones.forEach(function(e) {
+      var f    = new Date(e.fecha_evaluacion + 'T00:00:00');
+      var dias = diasRestantes(e.fecha_evaluacion);
+      if (dias <= 1)       criticas.push(e);
+      else if (dias <= 3)  pronto.push(e);
+      else if (dias <= 7)  normales.push(e);
+    });
+
+    var todas7 = criticas.concat(pronto).concat(normales);
+
+    // ── 1. Header badges ──────────────────────────
+    renderHeaderBadges(criticas, pronto, normales);
+
+    // ── 2. Banner persistente ─────────────────────
+    renderBanner(criticas, pronto, normales);
+
+    // ── 3. Modal semanal ──────────────────────────
+    var storageKey = 'jjhs_modal_' + fechaISO(hoy) + '_' + STATE.colegioId + '_' + STATE.grado;
+    var yaVisto    = sessionStorage.getItem(storageKey);
+    if (!yaVisto && todas7.length > 0) {
+      setTimeout(function() { abrirModalSemanal(todas7); }, 800);
+    }
+
+    // ── 4. Toasts ─────────────────────────────────
+    // Mostrar con delay escalonado para que no aparezcan todos a la vez
+    var toShow = todas7.slice(0, 5); // máximo 5 toasts
+    toShow.forEach(function(e, idx) {
+      setTimeout(function() { mostrarToast(e); }, 2200 + (idx * 600));
+    });
+  }
+
+  /* ── Header badges ── */
+  function renderHeaderBadges(criticas, pronto, normales) {
+    var container = document.getElementById('headerBadges');
+    var html = '';
+    if (criticas.length) {
+      html += '<div class="header-badge hb-urgent" onclick="document.getElementById(\'evalsSection\').scrollIntoView({behavior:\'smooth\'})">' +
+        '🚨 ' + criticas.length + (criticas.length===1 ? ' prueba urgente' : ' pruebas urgentes') +
+        '</div>';
+    }
+    if (pronto.length) {
+      html += '<div class="header-badge hb-warn" onclick="document.getElementById(\'evalsSection\').scrollIntoView({behavior:\'smooth\'})">' +
+        '📅 ' + pronto.length + ' en ' + (pronto.length===1?'esta':'estos') + ' días' +
+        '</div>';
+    }
+    container.innerHTML = html;
+  }
+
+  /* ── Banner persistente ── */
+  function renderBanner(criticas, pronto, normales) {
+    var banner = document.getElementById('urgencyBanner');
+    var allUrgent = criticas.concat(pronto);
+    if (!allUrgent.length && !normales.length) { banner.style.display = 'none'; return; }
+
+    var texto = document.getElementById('bannerText');
+    var pills = document.getElementById('bannerPills');
+    var html  = '';
+
+    if (criticas.length) {
+      banner.className = 'level-critical';
+      texto.innerHTML  = '<span>¡Atención!</span> Tienes ' + criticas.length +
+        ' evaluación' + (criticas.length>1?'es':'') + ' en las próximas horas — revisa las asignaturas resaltadas en el horario';
+      criticas.forEach(function(e) {
+        var dias = diasRestantes(e.fecha_evaluacion);
+        html += '<span class="banner-pill bp-red">' +
+          (ASIG_CONFIG[e.asignatura]||{emoji:'📚'}).emoji + ' ' +
+          e.asignatura + ' — ' + (dias===0?'HOY':'MAÑANA') + '</span>';
+      });
+    } else if (pronto.length) {
+      banner.className = 'level-warn';
+      texto.innerHTML  = '<span>Esta semana</span> tienes ' + pronto.length +
+        ' evaluación' + (pronto.length>1?'es':'') + ' próxima' + (pronto.length>1?'s':'');
+      pronto.forEach(function(e) {
+        var dias = diasRestantes(e.fecha_evaluacion);
+        html += '<span class="banner-pill bp-ore">' +
+          (ASIG_CONFIG[e.asignatura]||{emoji:'📚'}).emoji + ' ' +
+          e.asignatura + ' — en ' + dias + ' días</span>';
+      });
+    } else {
+      banner.className = 'level-warn';
+      texto.innerHTML  = '<span>Esta semana</span> tienes ' + normales.length +
+        ' evaluación' + (normales.length>1?'es':'') + ' en los próximos 7 días';
+      normales.slice(0,3).forEach(function(e) {
+        var dias = diasRestantes(e.fecha_evaluacion);
+        html += '<span class="banner-pill bp-gold">' +
+          (ASIG_CONFIG[e.asignatura]||{emoji:'📚'}).emoji + ' ' +
+          e.asignatura + ' — en ' + dias + ' días</span>';
+      });
+    }
+    pills.innerHTML = html;
+  }
+
+  /* ── Modal semanal ── */
+  function abrirModalSemanal(evals) {
+    var lunes   = getLunesSemana(STATE.semanaOffset);
+    var viernes = new Date(lunes); viernes.setDate(lunes.getDate()+4);
+    var opts    = { day:'numeric', month:'long' };
+
+    document.getElementById('modalWeekRange').textContent =
+      lunes.toLocaleDateString('es-CL', opts) + ' — ' +
+      viernes.toLocaleDateString('es-CL', { day:'numeric', month:'long', year:'numeric' });
+
+    var urgentes = evals.filter(function(e){ return diasRestantes(e.fecha_evaluacion) <= 1; });
+    document.getElementById('modalIntro').innerHTML =
+      urgentes.length
+        ? '🚨 Tienes <strong style="color:var(--red-l)">' + urgentes.length +
+          ' evaluación' + (urgentes.length>1?'es':' urgente') + '</strong> hoy o mañana y ' +
+          (evals.length - urgentes.length) + ' más esta semana.'
+        : '📋 Tienes <strong style="color:var(--gold-l)">' + evals.length +
+          ' evaluación' + (evals.length>1?'es':'') + '</strong> en los próximos 7 días.';
+
+    var sorted = evals.slice().sort(function(a,b){
+      return new Date(a.fecha_evaluacion) - new Date(b.fecha_evaluacion);
+    });
+    var html = '';
+    sorted.forEach(function(e) {
+      var cfg  = ASIG_CONFIG[e.asignatura] || { emoji:'📚', color:'#94a3b8' };
+      var dias = diasRestantes(e.fecha_evaluacion);
+      var cls  = dias<=1 ? 'mei-critical' : dias<=3 ? 'mei-warn' : 'mei-normal';
+      var dtxt = dias===0?'🚨 HOY' : dias===1?'⚠ MAÑANA' : 'En '+dias+' días';
+      var dcls = dias<=1 ? 'dias-critical' : dias<=3 ? 'dias-warn' : 'dias-normal';
+      html += '<div class="modal-eval-item ' + cls + '">' +
+        '<span class="mei-emoji">' + cfg.emoji + '</span>' +
+        '<div class="mei-info">' +
+          '<div class="mei-asig" style="color:' + cfg.color + '">' + e.asignatura.toUpperCase() + '</div>' +
+          '<div class="mei-fecha">📅 ' + formatFecha(e.fecha_evaluacion) + '</div>' +
+          (e.contenidos ? '<div class="mei-contenidos">📝 ' + e.contenidos + '</div>' : '') +
+        '</div>' +
+        '<div class="mei-dias ' + dcls + '">' + dtxt + '</div>' +
+        '</div>';
+    });
+    document.getElementById('modalEvalList').innerHTML = html;
+    document.getElementById('weeklyModal').classList.add('active');
+  }
+
+  function closeWeeklyModal(noMostrar) {
+    document.getElementById('weeklyModal').classList.remove('active');
+    if (noMostrar) {
+      var hoy = new Date(); hoy.setHours(0,0,0,0);
+      var key = 'jjhs_modal_' + fechaISO(hoy) + '_' + STATE.colegioId + '_' + STATE.grado;
+      sessionStorage.setItem(key, '1');
+    }
+  }
+
+  /* ── Toasts ── */
+  function mostrarToast(ev) {
+    var cfg  = ASIG_CONFIG[ev.asignatura] || { emoji:'📚' };
+    var dias = diasRestantes(ev.fecha_evaluacion);
+    var cls, dtxt;
+    if (dias===0)      { cls='t-critical'; dtxt='🚨 ¡ES HOY!'; }
+    else if (dias===1) { cls='t-critical'; dtxt='⚠️ Mañana'; }
+    else if (dias<=3)  { cls='t-warn';     dtxt='En ' + dias + ' días'; }
+    else               { cls='t-normal';   dtxt='En ' + dias + ' días'; }
+
+    var el = document.createElement('div');
+    el.className = 'toast-item ' + cls;
+    el.style.position = 'relative';
+    el.innerHTML =
+      '<span class="toast-emoji">' + cfg.emoji + '</span>' +
+      '<div class="toast-body">' +
+        '<div class="toast-title">' + ev.asignatura + '</div>' +
+        '<div class="toast-desc">' + formatFecha(ev.fecha_evaluacion) +
+          (ev.contenidos ? ' · ' + ev.contenidos.substring(0,30) + (ev.contenidos.length>30?'…':'') : '') + '</div>' +
+        '<div class="toast-dias ' +
+          (dias<=1?'dias-critical':dias<=3?'dias-warn':'dias-normal') + '">' + dtxt + '</div>' +
+      '</div>' +
+      '<button class="toast-close">✕</button>';
+
+    var stack = document.getElementById('toastStack');
+    stack.appendChild(el);
+
+    el.querySelector('.toast-close').addEventListener('click', function(){ removeToast(el); });
+    el.addEventListener('click', function(e) {
+      if (!e.target.classList.contains('toast-close')) { abrirPopup(ev); removeToast(el); }
+    });
+
+    var dur = dias <= 1 ? 10000 : 8000;
+    var timer = setTimeout(function(){ removeToast(el); }, dur);
+    el._timer = timer;
+  }
+
+  function removeToast(el) {
+    if (el._timer) clearTimeout(el._timer);
+    el.style.animation = 'none';
+    el.style.opacity   = '0';
+    el.style.transform = 'translateX(40px)';
+    el.style.transition= 'all .25s ease';
+    setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 260);
+  }
+
+  /* ═══════════════════════════════════════════════════
+     HELPERS
+  ═══════════════════════════════════════════════════ */
+  function diasRestantes(fechaStr) {
+    var hoy = new Date(); hoy.setHours(0,0,0,0);
+    var f   = new Date(fechaStr + 'T00:00:00');
+    return Math.max(0, Math.ceil((f - hoy) / 86400000));
+  }
+
+  function formatFecha(fechaStr) {
+    return new Date(fechaStr + 'T00:00:00')
+      .toLocaleDateString('es-CL', { weekday:'long', day:'numeric', month:'long' });
+  }
+
+  function fechaISO(d) {
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+  </script>
+</body>
+</html>

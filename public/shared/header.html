@@ -298,11 +298,15 @@ inyectar este fragmento en el DOM.
   </div>
 
   <!-- Monedas -->
-  <div class="header-coins">
+  <div class="header-coins"
+    style="display: flex; align-items: center; gap: 5px; background: rgba(250, 204, 21, 0.15); border: 1px solid rgba(250, 204, 21, 0.4); padding: 3px 8px; border-radius: 16px; white-space: nowrap; flex-shrink: 0; min-width: max-content;">
     <img src="../shared/coin.png" alt="coin"
-      style="width:14px;height:14px;object-fit:contain;display:inline-block;vertical-align:middle;image-rendering:pixelated;">
-    <span id="headerCoins">—</span>
+      style="width:14px;height:14px;object-fit:contain;display:block;image-rendering:pixelated;flex-shrink:0;">
+    <span id="headerCoins"
+      style="color: #facc15; font-weight: 800; font-size: 0.85rem; font-family: 'Press Start 2P', monospace; line-height: 1;"></span>
   </div>
+
+
 
   <!-- Avatar con dropdown -->
   <div class="header-avatar-wrap">
@@ -561,3 +565,354 @@ inyectar este fragmento en el DOM.
     // y es capturado por el listener global de shared.js.
   })();
 </script>
+
+<!-- ============================================
+     MODAL REFUERZO FORZADO
+     Inyectado por shared.js → initRefuerzoForzado()
+     CSS aquí, lógica en shared.js
+     ============================================ -->
+<style>
+  .refuerzo-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.82);
+    backdrop-filter: blur(4px);
+    z-index: 8500;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  .refuerzo-overlay.active {
+    display: flex;
+  }
+
+  .refuerzo-card {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #cbd5e1;
+    width: 100%;
+    max-width: 440px;
+    overflow: hidden;
+    animation: refuerzoPopIn 0.22s ease;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  }
+
+  @keyframes refuerzoPopIn {
+    from {
+      opacity: 0;
+      transform: scale(0.94) translateY(8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  .refuerzo-header {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 1.4rem 1.5rem 1.1rem;
+    text-align: center;
+  }
+
+  .refuerzo-header-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #fef3c7;
+    border: 1px solid #fcd34d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin: 0 auto 12px;
+  }
+
+  .refuerzo-header-titulo {
+    font-size: 18px;
+    font-weight: 900;
+    color: #0f172a;
+    margin: 0;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  .refuerzo-header-sub {
+    font-size: 13px;
+    color: #475569;
+    font-weight: 700;
+    margin: 5px 0 0;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  .refuerzo-lista {
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 52vh;
+    overflow-y: auto;
+  }
+
+  .refuerzo-lista::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  .refuerzo-lista::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 2px;
+  }
+
+  .refuerzo-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #ffffff;
+    border-radius: 10px;
+    border: 2px solid #cbd5e1;
+  }
+
+  .refuerzo-item.urgente {
+    border-color: #f87171;
+  }
+
+  .refuerzo-item.normal {
+    border-color: #fbbf24;
+  }
+
+  .refuerzo-item.buena {
+    border-color: #4ade80;
+  }
+
+  .refuerzo-item.nueva {
+    border-color: #60a5fa;
+  }
+
+  .refuerzo-item-nota {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .refuerzo-item-nota.urgente {
+    background: #fef2f2;
+    border: 2px solid #f87171;
+  }
+
+  .refuerzo-item-nota.normal {
+    background: #fffbeb;
+    border: 2px solid #fbbf24;
+  }
+
+  .refuerzo-item-nota.buena {
+    background: #f0fdf4;
+    border: 2px solid #4ade80;
+  }
+
+  .refuerzo-item-nota.nueva {
+    background: #eff6ff;
+    border: 2px solid #60a5fa;
+  }
+
+  .refuerzo-item-nota-val {
+    font-size: 18px;
+    font-weight: 900;
+    line-height: 1;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  .refuerzo-item-nota-val.urgente {
+    color: #b91c1c;
+  }
+
+  .refuerzo-item-nota-val.normal {
+    color: #b45309;
+  }
+
+  .refuerzo-item-nota-val.buena {
+    color: #15803d;
+  }
+
+  .refuerzo-item-nota-val.nueva {
+    color: #1d4ed8;
+  }
+
+  .refuerzo-item-nota-lbl {
+    font-size: 9px;
+    font-weight: 800;
+    margin-top: 2px;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  .refuerzo-item-nota-lbl.urgente {
+    color: #b91c1c;
+  }
+
+  .refuerzo-item-nota-lbl.normal {
+    color: #b45309;
+  }
+
+  .refuerzo-item-nota-lbl.buena {
+    color: #15803d;
+  }
+
+  .refuerzo-item-nota-lbl.nueva {
+    color: #1d4ed8;
+  }
+
+  .refuerzo-item-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .refuerzo-item-nombre {
+    font-size: 14px;
+    font-weight: 900;
+    color: #0f172a;
+    margin: 0;
+    font-family: 'Nunito', sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .refuerzo-item-sub {
+    font-size: 12px;
+    color: #1e293b;
+    font-weight: 700;
+    margin: 2px 0 5px;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  .refuerzo-item-barra {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .refuerzo-barra-track {
+    flex: 1;
+    height: 5px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .refuerzo-barra-fill {
+    height: 100%;
+    border-radius: 3px;
+  }
+
+  .refuerzo-barra-pct {
+    font-size: 11px;
+    font-weight: 900;
+    min-width: 32px;
+    text-align: right;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  .refuerzo-alerta {
+    font-size: 11px;
+    font-weight: 900;
+    color: #b91c1c;
+    margin-top: 4px;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  .refuerzo-btn-ir {
+    font-size: 12px;
+    font-weight: 900;
+    color: #ffffff;
+    background: #1e3a5f;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    text-decoration: none;
+    flex-shrink: 0;
+    font-family: 'Nunito', sans-serif;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .refuerzo-btn-ir:hover {
+    background: #1e40af;
+  }
+
+  .refuerzo-pie {
+    padding: 0 1.25rem 1.25rem;
+    display: flex;
+    gap: 8px;
+  }
+
+  .refuerzo-btn-primario {
+    flex: 1;
+    padding: 11px;
+    background: #1e3a5f;
+    border: none;
+    border-radius: 10px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 900;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .refuerzo-btn-primario:hover {
+    background: #1e40af;
+  }
+
+  .refuerzo-btn-cerrar {
+    padding: 11px 18px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 800;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .refuerzo-btn-cerrar:hover {
+    border-color: #94a3b8;
+    color: #0f172a;
+  }
+
+  .refuerzo-pie-hint {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 700;
+    text-align: center;
+    margin: 0 0 10px;
+    font-family: 'Nunito', sans-serif;
+  }
+</style>
+
+<div class="refuerzo-overlay" id="refuerzoOverlay">
+  <div class="refuerzo-card">
+    <div class="refuerzo-header">
+      <div class="refuerzo-header-icon">📚</div>
+      <p class="refuerzo-header-titulo" id="refuerzoTitulo">Tienes refuerzos pendientes</p>
+      <p class="refuerzo-header-sub" id="refuerzoHint">Completa al menos uno para continuar</p>
+    </div>
+    <div class="refuerzo-lista" id="refuerzoLista"></div>
+    <div style="padding: 0 1.25rem;">
+      <p class="refuerzo-pie-hint" id="refuerzoPieHint">Este recordatorio volverá más tarde</p>
+    </div>
+    <div class="refuerzo-pie">
+      <button class="refuerzo-btn-primario" id="refuerzoIrBtn">Empezar refuerzo</button>
+      <button class="refuerzo-btn-cerrar" id="refuerzoCerrarBtn">Más tarde</button>
+    </div>
+  </div>
+</div>

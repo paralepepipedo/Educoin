@@ -18,12 +18,23 @@ SCRIPTS:  ../shared/shared.js
     rel="stylesheet" />
   <link rel="stylesheet" href="../shared/shared.css" />
   <script data-clerk-publishable-key="pk_test_bG92aW5nLXJhcHRvci0xLmNsZXJrLmFjY291bnRzLmRldiQ"
-    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
+    src="https://lovable-raptor-1.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+    crossorigin="anonymous"></script>
 
   <style>
     /* =============================================
    MISIONES — estilos propios
    ============================================= */
+    /* Compensar altura del header fijo */
+    .main {
+      padding-top: 80px;
+    }
+
+    @media (max-width: 600px) {
+      .main {
+        padding-top: 72px;
+      }
+    }
 
     /* ── PAGE HEADER ── */
     .misiones-page-header {

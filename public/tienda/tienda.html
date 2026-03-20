@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -846,7 +846,8 @@
 
   <!-- SDK de Clerk (carga síncrona — sin async/defer) -->
   <script data-clerk-publishable-key="pk_test_bG92aW5nLXJhcHRvci0xLmNsZXJrLmFjY291bnRzLmRldiQ"
-    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
+    src="https://lovable-raptor-1.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+    crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -1403,7 +1404,11 @@
         // Imagen/emoji zona
         var imgHTML;
         if (item.imagen_url) {
-          var src = 'images/' + item.imagen_url.replace('images/', '');
+          // NUEVA LÓGICA: Verifica si es link externo o archivo local
+          var src = item.imagen_url.startsWith('http')
+            ? item.imagen_url
+            : 'images/' + item.imagen_url.replace('images/', '');
+
           imgHTML = '<div class="card-img-wrap">' +
             '<img src="' + escapeHtml(src) + '" alt="' + escapeHtml(item.nombre) + '" ' +
             'onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'">' +
@@ -1638,8 +1643,16 @@
             (estado === 'usado' ? 'Usado' : 'Expirado') + '</button>';
         }
 
+        // NUEVA LÓGICA: Procesar el link del inventario antes de inyectarlo
+        var srcInv = '';
+        if (inv.imagen_url) {
+          srcInv = inv.imagen_url.startsWith('http')
+            ? inv.imagen_url
+            : 'images/' + inv.imagen_url.replace('images/', '');
+        }
+
         var iconoHTML = inv.imagen_url
-          ? '<img src="images/' + escapeHtml((inv.imagen_url || '').replace('images/', '')) + '" ' +
+          ? '<img src="' + escapeHtml(srcInv) + '" ' +
           'style="width:100%;max-height:70px;object-fit:cover;border-radius:6px;margin-bottom:.35rem;display:block"' +
           ' onerror="this.style.display=\'none\'">'
           : '<span class="item-emoji" style="font-size:2.2rem">' + escapeHtml(inv.emoji || '🎁') + '</span>';
@@ -1733,13 +1746,18 @@
         // Visual: imagen o emoji
         var visual = document.getElementById('mc_visual');
         if (item.imagen_url) {
+          // NUEVA LÓGICA: Validar para el modal
+          var srcModal = item.imagen_url.startsWith('http')
+            ? item.imagen_url
+            : 'images/' + item.imagen_url.replace('images/', '');
+
           var img = new Image();
           img.className = 'mc-img';
           img.alt = item.nombre;
           img.onerror = function () {
             visual.innerHTML = '<div class="modal-emoji" id="mc_emoji">' + item.emoji + '</div>';
           };
-          img.src = item.imagen_url;
+          img.src = srcModal; // <-- Usa la variable calculada
           visual.innerHTML = '';
           visual.appendChild(img);
         } else {

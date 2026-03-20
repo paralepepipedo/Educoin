@@ -109,7 +109,7 @@ function inyectarPWAMeta() {
 document.addEventListener('clerkReady', function (e) {
   var u = e.detail; // { id, username, email, firstName }
   var LS_PERFIL_KEY = 'educoins_perfil_v1';
-  // Lee las preferencias guardadas por perfil.js
+
   function leerLocal() {
     try {
       var raw = localStorage.getItem(LS_PERFIL_KEY);
@@ -117,61 +117,52 @@ document.addEventListener('clerkReady', function (e) {
     } catch (err) { return null; }
   }
 
-  // Base para el header con valores de nuevo usuario
   var BASE_DATOS = {
     nombre: u.username || u.firstName || 'Alumno',
-    avatar_base: '🐰',
-    nivel: 1, xp: 0, xp_siguiente: 1000,
-    monedas: 100, energia_actual: 100, energia_max: 100,
-    categoria_rango: 'Explorador', sub_rango: 'Bronce',
-    misiones_pendientes: 0, evaluaciones_proximas: 0, duelos_pendientes: 0,
+    avatar_base: '👤', nivel: 1, xp: 0, xp_siguiente: 1000,
+    monedas: 0, energia_actual: 100, energia_max: 100,
+    categoria_rango: 'Explorador', subrango: 'Bronce',
+    misiones_pendientes: 0, evaluaciones_proximas: 0, duelos_pendientes: 0
   };
 
-  function aplicarHeader(datos, desdeAPI) {
-    var local = leerLocal();
-    if (desdeAPI) {
-      // Datos de la API son la fuente de verdad para monedas, xp, energia, nivel.
-      // localStorage solo puede aportar preferencias cosmeticas (avatar, nombre).
-      var preferenciasLocales = {};
-      if (local && local.avatar_base) preferenciasLocales.avatar_base = local.avatar_base;
-      if (local && local.nombre) preferenciasLocales.nombre = local.nombre;
-      actualizarHeaderPerfil(Object.assign({}, BASE_DATOS, datos || {}, preferenciasLocales));
-      // Guardar datos frescos de la API en localStorage para proxima carga rapida
-      try { localStorage.setItem('educoins_perfil_v1', JSON.stringify(datos)); } catch (e) { }
-    } else {
-      // Sin datos de API aun: usar localStorage para carga instantanea
-      actualizarHeaderPerfil(Object.assign({}, BASE_DATOS, local || {}, datos || {}));
-    }
-  }
+  var local = leerLocal() || {};
 
-  // Aplicar inmediatamente con localStorage (sin parpadeo en carga)
-  // DESPUÉS:
-  if (document.getElementById('headerAvatar')) {
-    aplicarHeader();
-  } else {
-    // El header aún no fue inyectado — esperar 800ms y reintentar
-    setTimeout(function () { aplicarHeader(); }, 800);
-  }
+  // 1. Mostrar datos guardados o base INMEDIATAMENTE para que no se vea vacío
+  actualizarHeaderPerfil(Object.assign({}, BASE_DATOS, local));
 
-  // Cargar datos reales de la API — siempre sobreescriben localStorage
-  if (window.CLERK_TOKEN) {
-    fetch(BASE_URL + '/api/perfil', {
-      credentials: 'include',
-      headers: { 'Authorization': 'Bearer ' + window.CLERK_TOKEN }
-    })
-      .then(function (res) { return res.ok ? res.json() : null; })
-      .then(function (data) {
-        if (data && data.clerk_id) {
-          // API retorna el perfil directo
-          aplicarHeader(data, true);
-        } else if (data && data.perfil) {
-          // Compatibilidad si viene envuelto en .perfil
-          aplicarHeader(data.perfil, true);
-        }
+  // 2. Ir a buscar las monedas y XP frescas a la base de datos
+  if (window.Clerk && window.Clerk.session) {
+    window.Clerk.session.getToken().then(function (token) {
+      var apiUrl = BASE_URL + (BASE_URL.endsWith('/') ? '' : '/') + 'api/perfil';
+
+      fetch(apiUrl, {
+        headers: { 'Authorization': 'Bearer ' + token }
       })
-      .catch(function () { }); // silencioso
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (data) {
+          if (data && (data.clerk_id || data.perfil)) {
+            var perfil = data.clerk_id ? data : data.perfil;
+
+            var cosm = {
+              avatar_base: local.avatar_base || perfil.avatar_base,
+              nombre: local.nombre || perfil.nombre
+            };
+
+            var perfilFinal = Object.assign({}, BASE_DATOS, perfil, cosm);
+
+            // Actualizar monedas reales en pantalla
+            actualizarHeaderPerfil(perfilFinal);
+            try { localStorage.setItem(LS_PERFIL_KEY, JSON.stringify(perfilFinal)); } catch (e) { }
+
+            // Verificar evaluaciones forzadas (solo alumnos, no admin)
+            initRefuerzoForzado(token);
+          }
+        })
+        .catch(function (err) { console.error("Error al cargar monedas en Header:", err); });
+    });
   }
 });
+
 
 // ============================================
 // 4. CARGAR HEADER.HTML
@@ -328,7 +319,23 @@ function initSidebarMovil() {
 // 6. ACTUALIZAR DATOS DEL PERFIL EN HEADER
 // ============================================
 function actualizarHeaderPerfil(p) {
-  setTexto('headerCoins', p.monedas ? p.monedas.toLocaleString('es-CL') : '—');
+  // Lógica de monedas: normal hasta 99.999, formato gamer (K/M) desde 100.000
+  var m = parseInt(p.monedas || 0);
+  var monedasFormateadas;
+
+  if (m >= 1000000) {
+    // 1.000.000 o más -> 1.5M
+    monedasFormateadas = (m / 1000000).toFixed(1).replace('.0', '') + 'M';
+  } else if (m >= 100000) {
+    // Entre 100.000 y 999.999 -> 150K
+    monedasFormateadas = Math.floor(m / 1000) + 'K';
+  } else {
+    // Hasta 99.999 -> 99.999 (Formato normal chileno con punto)
+    monedasFormateadas = m.toLocaleString('es-CL');
+  }
+
+  setTexto('headerCoins', monedasFormateadas);
+
   setTexto('headerEnergyText', window.innerWidth <= 768
     ? (p.energia_actual || '—')
     : (p.energia_actual || '—') + '/' + (p.energia_max || '—'));
@@ -491,20 +498,37 @@ document.addEventListener('click', function (e) {
   var base = BASE_URL || '';
   var loginUrl = base + '/auth/login.html';
 
+  // Limpiar localStorage antes de cerrar sesión
+  // Detener renovación de token si existe
+  if (window._tokenRenewalInterval) {
+    clearInterval(window._tokenRenewalInterval);
+    window._tokenRenewalInterval = null;
+  }
+
+  // Limpiar caché y cookies de Clerk al cerrar sesión
+  try {
+    localStorage.removeItem('educoins_perfil_v1');
+    localStorage.removeItem('educoins_refuerzo_cache_v1');
+    localStorage.removeItem('educoins_refuerzo_cache_v1_shown');
+    document.cookie = 'clerk_active_context=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    document.cookie = '__clerk_db_jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+  } catch (e) { }
+
+  // Dejamos que Clerk cierre sesión correctamente usando sus propios datos
   if (window.Clerk && window.Clerk.signOut) {
     window.Clerk.signOut().then(function () {
       window.location.href = loginUrl;
     }).catch(function () {
-      window.location.href = loginUrl; // redirigir de todas formas
+      window.location.href = loginUrl;
     });
   } else if (window.CLERK_INSTANCE && window.CLERK_INSTANCE.signOut) {
     window.CLERK_INSTANCE.signOut().then(function () {
       window.location.href = loginUrl;
     });
   } else {
-    // Fallback: redirigir al login directamente
     window.location.href = loginUrl;
   }
+
 });
 
 // ============================================
@@ -620,3 +644,143 @@ function initDropdownHeader() {
   if (sn) new MutationObserver(syncDropdown).observe(sn, { childList: true, characterData: true, subtree: true });
   if (sr) new MutationObserver(syncDropdown).observe(sr, { childList: true, characterData: true, subtree: true });
 }
+
+// ============================================
+// REFUERZO FORZADO
+// ============================================
+var LS_REFUERZO_CACHE = 'educoins_refuerzo_cache_v1';
+
+function initRefuerzoForzado(token) {
+  var path = window.location.pathname.toLowerCase();
+  if (path.indexOf('/admin') !== -1 || path.indexOf('admin_') !== -1) return;
+
+  // Mostrar desde caché si es reciente (< 5 min)
+  try {
+    var cached = localStorage.getItem(LS_REFUERZO_CACHE);
+    if (cached) {
+      var cp = JSON.parse(cached);
+      if ((Date.now() - (cp.ts || 0)) < 5 * 60 * 1000 && cp.pruebas) {
+        var aM = filtrarPruebasPorIntervalo(cp.pruebas);
+        if (aM.length > 0) esperarHeaderYMostrar(aM);
+      }
+    }
+  } catch (e) { }
+
+  // Refrescar desde API
+  fetch(BASE_URL + '/api/pruebas', {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'get_pruebas_forzadas' })
+  })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (data) {
+      if (!data || !data.pruebas) return;
+      try { localStorage.setItem(LS_REFUERZO_CACHE, JSON.stringify({ ts: Date.now(), pruebas: data.pruebas })); } catch (e) { }
+      var shown = null;
+      try { shown = localStorage.getItem(LS_REFUERZO_CACHE + '_shown'); } catch (e) { }
+      if (!shown) {
+        var aM2 = filtrarPruebasPorIntervalo(data.pruebas);
+        if (aM2.length > 0) esperarHeaderYMostrar(aM2);
+      }
+    })
+    .catch(function (err) { console.error('[refuerzo]', err); });
+}
+
+function filtrarPruebasPorIntervalo(pruebas) {
+  return pruebas.filter(function (p) {
+    var lsKey = 'educoins_refuerzo_visto_' + p.id;
+    var ultimoVisto = null;
+    try { ultimoVisto = localStorage.getItem(lsKey); } catch (e) { }
+    if (!ultimoVisto) return true;
+    return (Date.now() - new Date(ultimoVisto).getTime()) >= calcularIntervaloRefuerzo(p.ultima_nota);
+  });
+}
+
+function calcularIntervaloRefuerzo(ultimaNota) {
+  if (ultimaNota === null || ultimaNota === undefined) return 0;
+  if (ultimaNota <= 2) return 30 * 60 * 1000;
+  if (ultimaNota >= 7) return 4 * 60 * 60 * 1000;
+  return 2 * 60 * 60 * 1000;
+}
+
+function esperarHeaderYMostrar(pruebas) {
+  try { localStorage.setItem(LS_REFUERZO_CACHE + '_shown', '1'); } catch (e) { }
+  setTimeout(function () { try { localStorage.removeItem(LS_REFUERZO_CACHE + '_shown'); } catch (e) { } }, 3000);
+  var intentos = 0;
+  function check() {
+    var overlay = document.getElementById('refuerzoOverlay');
+    if (overlay) { renderRefuerzoModal(pruebas, overlay); }
+    else if (intentos < 25) { intentos++; setTimeout(check, 150); }
+  }
+  check();
+}
+
+function renderRefuerzoModal(pruebas, overlay) {
+  var lista = document.getElementById('refuerzoLista');
+  var hintEl = document.getElementById('refuerzoHint');
+  var pieHint = document.getElementById('refuerzoPieHint');
+  var cerrarBtn = document.getElementById('refuerzoCerrarBtn');
+  var irBtn = document.getElementById('refuerzoIrBtn');
+  if (!lista) return;
+
+  if (hintEl) hintEl.textContent = pruebas.length === 1 ? 'Completa esta evaluación para continuar' : 'Completa al menos una para continuar';
+
+  var menorIntervalo = Math.min.apply(null, pruebas.map(function (p) { return calcularIntervaloRefuerzo(p.ultima_nota); }));
+  if (pieHint) {
+    if (menorIntervalo === 0) pieHint.textContent = 'Primera vez — los resultados quedarán guardados';
+    else if (menorIntervalo <= 30 * 60 * 1000) pieHint.textContent = 'Volverá en 30 minutos si no lo intentas';
+    else if (menorIntervalo <= 2 * 60 * 60 * 1000) pieHint.textContent = 'Volverá en 2 horas';
+    else pieHint.textContent = 'Volverá en 4 horas';
+  }
+
+  lista.innerHTML = '';
+  pruebas.forEach(function (p) {
+    var tieneIntento = p.total_intentos > 0;
+    var claseNota = !tieneIntento ? 'nueva' : (p.ultima_nota <= 3.9 ? 'urgente' : (p.ultima_nota >= 6 ? 'buena' : 'normal'));
+    var colorBarra = !tieneIntento ? '#3b82f6' : (p.ultima_nota <= 3.9 ? '#dc2626' : (p.ultima_nota >= 6 ? '#16a34a' : '#d97706'));
+    var colorBotonIr = !tieneIntento ? '#2563eb' : (p.ultima_nota <= 3.9 ? '#dc2626' : (p.ultima_nota >= 6 ? '#15803d' : '#d97706'));
+    var pctBarra = p.efectividad_pct !== null ? p.efectividad_pct : 0;
+    var pctTexto = p.efectividad_pct !== null ? p.efectividad_pct + '%' : '—';
+    var notaTexto = tieneIntento ? String(p.ultima_nota).replace('.', ',') : '—';
+    var notaLbl = tieneIntento ? 'nota' : 'nuevo';
+    var intentosTxt = p.total_intentos === 0 ? 'Sin intentos' : (p.total_intentos === 1 ? '1 intento' : p.total_intentos + ' intentos');
+    var url = BASE_URL + '/evaluaciones/preparacion.html?id=' + p.id;
+    var alertaHtml = p.necesita_atencion ? '<p class="refuerzo-alerta">Necesitas reforzar este tema urgentemente</p>' : '';
+    var barraHtml = tieneIntento
+      ? '<div class="refuerzo-item-barra"><div class="refuerzo-barra-track"><div class="refuerzo-barra-fill" style="width:' + pctBarra + '%;background:' + colorBarra + ';"></div></div><span class="refuerzo-barra-pct" style="color:' + colorBarra + ';">' + pctTexto + '</span></div>'
+      : '';
+
+    lista.innerHTML +=
+      '<div class="refuerzo-item ' + claseNota + '">'
+      + '<div class="refuerzo-item-nota ' + claseNota + '"><span class="refuerzo-item-nota-val ' + claseNota + '">' + notaTexto + '</span><span class="refuerzo-item-nota-lbl ' + claseNota + '">' + notaLbl + '</span></div>'
+      + '<div class="refuerzo-item-info"><p class="refuerzo-item-nombre">' + p.nombre + '</p><p class="refuerzo-item-sub">' + p.asignatura + ' · ' + intentosTxt + '</p>' + barraHtml + alertaHtml + '</div>'
+      + '<button class="refuerzo-btn-ir" style="background:' + colorBotonIr + ';" onclick="window.cerrarYNavegar(\'' + url + '\')" type="button">Ir →</button>'
+      + '</div>';
+  });
+
+  if (irBtn) {
+    var primeraUrl = BASE_URL + '/evaluaciones/preparacion.html?id=' + pruebas[0].id;
+    irBtn.onclick = function () { window.cerrarYNavegar(primeraUrl); };
+  }
+
+  pruebas.forEach(function (p) {
+    try { localStorage.setItem('educoins_refuerzo_visto_' + p.id, new Date().toISOString()); } catch (e) { }
+  });
+
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  if (cerrarBtn) cerrarBtn.onclick = cerrarRefuerzoModal;
+}
+
+window.cerrarRefuerzoModal = function () {
+  var overlay = document.getElementById('refuerzoOverlay');
+  if (overlay) overlay.classList.remove('active');
+  document.body.style.overflow = '';
+};
+
+window.cerrarYNavegar = function (url) {
+  var overlay = document.getElementById('refuerzoOverlay');
+  if (overlay) { overlay.classList.remove('active'); overlay.style.display = 'none'; }
+  document.body.style.overflow = '';
+  window.location.assign(url);
+};

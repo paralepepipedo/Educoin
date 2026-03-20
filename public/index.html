@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<!--
+  <!--
 ============================================
 ÍNDICE — index.html
 1. Meta y fuentes
@@ -16,1893 +17,3054 @@
 10. Scripts inline
 ============================================
 -->
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>EduCoins — ¡Aprende y Gana!</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8" />
+  <script src="https://lovable-raptor-1.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+    data-clerk-publishable-key="pk_test_bG92aW5nLXJhcHRvci0xLmNsZXJrLmFjY291bnRzLmRldiQ"
+    crossorigin="anonymous"></script>
+  <script>
+    window.addEventListener('load', function () {
+      if (window.Clerk) {
+        window.Clerk.load().then(function () {
+          if (window.Clerk.user) {
+            window.location.href = '/dashboard/dashboard.html';
+          }
+        });
+      }
+    });
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduCoins — ¡Aprende y Gana!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800;900&display=swap"
+    rel="stylesheet" />
 
-<style>
-/* ============================================
+  <style>
+    /* ============================================
    1. VARIABLES Y RESET
 ============================================ */
-:root {
-  --bg: #07071a;
-  --bg2: #0d0d2b;
-  --bg3: #12122e;
-  --violet: #7c3aed;
-  --violet-light: #a855f7;
-  --cyan: #06b6d4;
-  --cyan-light: #22d3ee;
-  --green: #22c55e;
-  --yellow: #facc15;
-  --red: #ef4444;
-  --orange: #f97316;
-  --pink: #ec4899;
-  --text: #e2e8f0;
-  --text-dim: #94a3b8;
-  --border: rgba(124, 58, 237, 0.3);
-  --card-bg: rgba(13, 13, 43, 0.8);
-  --glow-violet: 0 0 20px rgba(124, 58, 237, 0.5);
-  --glow-cyan: 0 0 20px rgba(6, 182, 212, 0.5);
-  --glow-green: 0 0 20px rgba(34, 197, 94, 0.5);
-  --pixel: 'Press Start 2P', monospace;
-  --body: 'Nunito', sans-serif;
-}
+    :root {
+      --bg: #07071a;
+      --bg2: #0d0d2b;
+      --bg3: #12122e;
+      --violet: #7c3aed;
+      --violet-light: #a855f7;
+      --cyan: #06b6d4;
+      --cyan-light: #22d3ee;
+      --green: #22c55e;
+      --yellow: #facc15;
+      --red: #ef4444;
+      --orange: #f97316;
+      --pink: #ec4899;
+      --text: #e2e8f0;
+      --text-dim: #94a3b8;
+      --border: rgba(124, 58, 237, 0.3);
+      --card-bg: rgba(13, 13, 43, 0.8);
+      --glow-violet: 0 0 20px rgba(124, 58, 237, 0.5);
+      --glow-cyan: 0 0 20px rgba(6, 182, 212, 0.5);
+      --glow-green: 0 0 20px rgba(34, 197, 94, 0.5);
+      --pixel: 'Press Start 2P', monospace;
+      --body: 'Nunito', sans-serif;
+    }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+    }
 
-body {
-  font-family: var(--body);
-  background: var(--bg);
-  color: var(--text);
-  overflow-x: hidden;
-  min-height: 100vh;
-}
+    body {
+      font-family: var(--body);
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
 
-/* Scanlines overlay */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0, 0, 0, 0.05) 2px,
-    rgba(0, 0, 0, 0.05) 4px
-  );
-  pointer-events: none;
-  z-index: 9999;
-}
+    /* Scanlines overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(0deg,
+          transparent,
+          transparent 2px,
+          rgba(0, 0, 0, 0.05) 2px,
+          rgba(0, 0, 0, 0.05) 4px);
+      pointer-events: none;
+      z-index: 9999;
+    }
 
-/* Stars background */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image:
-    radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.6) 0%, transparent 100%),
-    radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,0.5) 0%, transparent 100%),
-    radial-gradient(1px 1px at 50% 60%, rgba(255,255,255,0.4) 0%, transparent 100%),
-    radial-gradient(1px 1px at 10% 80%, rgba(255,255,255,0.6) 0%, transparent 100%),
-    radial-gradient(1px 1px at 90% 70%, rgba(255,255,255,0.5) 0%, transparent 100%),
-    radial-gradient(2px 2px at 35% 15%, rgba(168,85,247,0.8) 0%, transparent 100%),
-    radial-gradient(2px 2px at 65% 85%, rgba(6,182,212,0.8) 0%, transparent 100%),
-    radial-gradient(1px 1px at 75% 45%, rgba(255,255,255,0.4) 0%, transparent 100%),
-    radial-gradient(1px 1px at 25% 55%, rgba(255,255,255,0.3) 0%, transparent 100%);
-  pointer-events: none;
-  z-index: 0;
-}
+    /* Stars background */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 20% 30%, rgba(255, 255, 255, 0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 80% 10%, rgba(255, 255, 255, 0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 50% 60%, rgba(255, 255, 255, 0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 10% 80%, rgba(255, 255, 255, 0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 70%, rgba(255, 255, 255, 0.5) 0%, transparent 100%),
+        radial-gradient(2px 2px at 35% 15%, rgba(168, 85, 247, 0.8) 0%, transparent 100%),
+        radial-gradient(2px 2px at 65% 85%, rgba(6, 182, 212, 0.8) 0%, transparent 100%),
+        radial-gradient(1px 1px at 75% 45%, rgba(255, 255, 255, 0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 25% 55%, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
 
-/* ============================================
+    /* ============================================
    2. UTILIDADES
 ============================================ */
-.container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; position: relative; z-index: 1; }
-.pixel { font-family: var(--pixel); }
-.glow-text-violet { text-shadow: 0 0 10px var(--violet), 0 0 30px rgba(124,58,237,0.5); }
-.glow-text-cyan { text-shadow: 0 0 10px var(--cyan), 0 0 30px rgba(6,182,212,0.5); }
-.glow-text-green { text-shadow: 0 0 10px var(--green), 0 0 30px rgba(34,197,94,0.5); }
-.glow-text-yellow { text-shadow: 0 0 10px var(--yellow), 0 0 30px rgba(250,204,21,0.5); }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
 
-.btn {
-  display: inline-flex; align-items: center; gap: 0.5rem;
-  padding: 0.75rem 1.75rem;
-  border: none; border-radius: 8px;
-  font-family: var(--pixel); font-size: 0.55rem;
-  cursor: pointer; text-decoration: none;
-  transition: all 0.2s ease;
-  position: relative; overflow: hidden;
-  letter-spacing: 0.5px;
-}
-.btn::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
-  transform: translateX(-100%);
-  transition: transform 0.4s ease;
-}
-.btn:hover::before { transform: translateX(100%); }
-.btn:hover { transform: translateY(-2px); }
-.btn:active { transform: translateY(0); }
+    .pixel {
+      font-family: var(--pixel);
+    }
 
-.btn-violet {
-  background: linear-gradient(135deg, var(--violet), #6d28d9);
-  color: white;
-  box-shadow: 0 4px 15px rgba(124,58,237,0.4);
-}
-.btn-violet:hover { box-shadow: 0 6px 25px rgba(124,58,237,0.6); }
+    .glow-text-violet {
+      text-shadow: 0 0 10px var(--violet), 0 0 30px rgba(124, 58, 237, 0.5);
+    }
 
-.btn-cyan {
-  background: linear-gradient(135deg, var(--cyan), #0891b2);
-  color: white;
-  box-shadow: 0 4px 15px rgba(6,182,212,0.4);
-}
-.btn-cyan:hover { box-shadow: 0 6px 25px rgba(6,182,212,0.6); }
+    .glow-text-cyan {
+      text-shadow: 0 0 10px var(--cyan), 0 0 30px rgba(6, 182, 212, 0.5);
+    }
 
-.btn-green {
-  background: linear-gradient(135deg, var(--green), #16a34a);
-  color: white;
-  box-shadow: 0 4px 15px rgba(34,197,94,0.4);
-}
-.btn-green:hover { box-shadow: 0 6px 25px rgba(34,197,94,0.6); }
+    .glow-text-green {
+      text-shadow: 0 0 10px var(--green), 0 0 30px rgba(34, 197, 94, 0.5);
+    }
 
-.btn-outline {
-  background: transparent;
-  border: 2px solid var(--violet);
-  color: var(--violet-light);
-  box-shadow: 0 0 15px rgba(124,58,237,0.2);
-}
-.btn-outline:hover { background: rgba(124,58,237,0.1); box-shadow: var(--glow-violet); }
+    .glow-text-yellow {
+      text-shadow: 0 0 10px var(--yellow), 0 0 30px rgba(250, 204, 21, 0.5);
+    }
 
-/* ============================================
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.75rem;
+      border: none;
+      border-radius: 8px;
+      font-family: var(--pixel);
+      font-size: 0.55rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+      letter-spacing: 0.5px;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+      transform: translateX(-100%);
+      transition: transform 0.4s ease;
+    }
+
+    .btn:hover::before {
+      transform: translateX(100%);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-violet {
+      background: linear-gradient(135deg, var(--violet), #6d28d9);
+      color: white;
+      box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+    }
+
+    .btn-violet:hover {
+      box-shadow: 0 6px 25px rgba(124, 58, 237, 0.6);
+    }
+
+    .btn-cyan {
+      background: linear-gradient(135deg, var(--cyan), #0891b2);
+      color: white;
+      box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
+    }
+
+    .btn-cyan:hover {
+      box-shadow: 0 6px 25px rgba(6, 182, 212, 0.6);
+    }
+
+    .btn-green {
+      background: linear-gradient(135deg, var(--green), #16a34a);
+      color: white;
+      box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+    }
+
+    .btn-green:hover {
+      box-shadow: 0 6px 25px rgba(34, 197, 94, 0.6);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--violet);
+      color: var(--violet-light);
+      box-shadow: 0 0 15px rgba(124, 58, 237, 0.2);
+    }
+
+    .btn-outline:hover {
+      background: rgba(124, 58, 237, 0.1);
+      box-shadow: var(--glow-violet);
+    }
+
+    /* ============================================
    3. HEADER / NAV
 ============================================ */
-header {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-  background: rgba(7, 7, 26, 0.85);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  padding: 0.75rem 0;
-}
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(7, 7, 26, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 0;
+    }
 
-nav {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 1rem;
-}
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
 
-.nav-logo {
-  display: flex; align-items: center; gap: 0.75rem;
-  text-decoration: none;
-}
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
 
-.logo-icon {
-  width: 40px; height: 40px;
-  background: linear-gradient(135deg, var(--violet), var(--cyan));
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.2rem;
-  box-shadow: var(--glow-violet);
-  animation: logoPulse 3s ease-in-out infinite;
-  image-rendering: pixelated;
-}
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--violet), var(--cyan));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      box-shadow: var(--glow-violet);
+      animation: logoPulse 3s ease-in-out infinite;
+      image-rendering: pixelated;
+    }
 
-@keyframes logoPulse {
-  0%, 100% { box-shadow: 0 0 10px rgba(124,58,237,0.5); }
-  50% { box-shadow: 0 0 25px rgba(124,58,237,0.9), 0 0 40px rgba(6,182,212,0.4); }
-}
+    @keyframes logoPulse {
 
-.logo-text {
-  font-family: var(--pixel);
-  font-size: 0.7rem;
-  line-height: 1.4;
-}
-.logo-text span:first-child { color: var(--violet-light); }
-.logo-text span:last-child { color: var(--cyan); font-size: 0.5rem; display: block; }
+      0%,
+      100% {
+        box-shadow: 0 0 10px rgba(124, 58, 237, 0.5);
+      }
 
-.nav-links {
-  display: flex; align-items: center; gap: 0.25rem;
-  list-style: none;
-}
-.nav-links a {
-  color: var(--text-dim); text-decoration: none;
-  font-size: 0.85rem; font-weight: 700;
-  padding: 0.5rem 0.875rem; border-radius: 6px;
-  transition: all 0.2s;
-}
-.nav-links a:hover { color: var(--text); background: rgba(124,58,237,0.15); }
+      50% {
+        box-shadow: 0 0 25px rgba(124, 58, 237, 0.9), 0 0 40px rgba(6, 182, 212, 0.4);
+      }
+    }
 
-.nav-actions { display: flex; align-items: center; gap: 0.75rem; }
+    .logo-text {
+      font-family: var(--pixel);
+      font-size: 0.7rem;
+      line-height: 1.4;
+    }
 
-.coins-badge {
-  display: flex; align-items: center; gap: 0.5rem;
-  background: rgba(250,204,21,0.1);
-  border: 1px solid rgba(250,204,21,0.3);
-  padding: 0.4rem 0.875rem; border-radius: 20px;
-  font-family: var(--pixel); font-size: 0.5rem; color: var(--yellow);
-  animation: coinGlow 2s ease-in-out infinite;
-}
+    .logo-text span:first-child {
+      color: var(--violet-light);
+    }
 
-@keyframes coinGlow {
-  0%, 100% { box-shadow: none; }
-  50% { box-shadow: 0 0 12px rgba(250,204,21,0.4); }
-}
+    .logo-text span:last-child {
+      color: var(--cyan);
+      font-size: 0.5rem;
+      display: block;
+    }
 
-.coin-icon { font-size: 1rem; }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      list-style: none;
+    }
 
-/* Mobile menu toggle */
-.menu-toggle {
-  display: none;
-  background: none; border: none; cursor: pointer;
-  flex-direction: column; gap: 5px; padding: 4px;
-}
-.menu-toggle span {
-  display: block; width: 24px; height: 2px;
-  background: var(--text); border-radius: 2px;
-  transition: all 0.3s;
-}
+    .nav-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 0.5rem 0.875rem;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
 
-/* ============================================
+    .nav-links a:hover {
+      color: var(--text);
+      background: rgba(124, 58, 237, 0.15);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .coins-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(250, 204, 21, 0.1);
+      border: 1px solid rgba(250, 204, 21, 0.3);
+      padding: 0.4rem 0.875rem;
+      border-radius: 20px;
+      font-family: var(--pixel);
+      font-size: 0.5rem;
+      color: var(--yellow);
+      animation: coinGlow 2s ease-in-out infinite;
+    }
+
+    @keyframes coinGlow {
+
+      0%,
+      100% {
+        box-shadow: none;
+      }
+
+      50% {
+        box-shadow: 0 0 12px rgba(250, 204, 21, 0.4);
+      }
+    }
+
+    .coin-icon {
+      font-size: 1rem;
+    }
+
+    /* Mobile menu toggle */
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      flex-direction: column;
+      gap: 5px;
+      padding: 4px;
+    }
+
+    .menu-toggle span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    /* ============================================
    4. HERO SECTION
 ============================================ */
-.hero {
-  min-height: 100vh;
-  display: flex; align-items: center;
-  padding: 6rem 0 4rem;
-  position: relative; overflow: hidden;
-}
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 6rem 0 4rem;
+      position: relative;
+      overflow: hidden;
+    }
 
-/* Grid de fondo animado */
-.hero-grid {
-  position: absolute; inset: 0;
-  background-image:
-    linear-gradient(rgba(124,58,237,0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(124,58,237,0.05) 1px, transparent 1px);
-  background-size: 60px 60px;
-  animation: gridScroll 20s linear infinite;
-}
-@keyframes gridScroll {
-  from { transform: translate(0, 0); }
-  to { transform: translate(60px, 60px); }
-}
+    /* Grid de fondo animado */
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(124, 58, 237, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124, 58, 237, 0.05) 1px, transparent 1px);
+      background-size: 60px 60px;
+      animation: gridScroll 20s linear infinite;
+    }
 
-/* Orbes de fondo */
-.orb {
-  position: absolute; border-radius: 50%;
-  filter: blur(80px); pointer-events: none; z-index: 0;
-}
-.orb-1 {
-  width: 500px; height: 500px;
-  background: radial-gradient(circle, rgba(124,58,237,0.25) 0%, transparent 70%);
-  top: -100px; left: -150px;
-  animation: orbFloat 8s ease-in-out infinite;
-}
-.orb-2 {
-  width: 400px; height: 400px;
-  background: radial-gradient(circle, rgba(6,182,212,0.2) 0%, transparent 70%);
-  top: 50%; right: -100px;
-  animation: orbFloat 10s ease-in-out infinite reverse;
-}
-.orb-3 {
-  width: 300px; height: 300px;
-  background: radial-gradient(circle, rgba(34,197,94,0.15) 0%, transparent 70%);
-  bottom: 0; left: 40%;
-  animation: orbFloat 12s ease-in-out infinite 2s;
-}
+    @keyframes gridScroll {
+      from {
+        transform: translate(0, 0);
+      }
 
-@keyframes orbFloat {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(30px, -20px) scale(1.05); }
-  66% { transform: translate(-20px, 20px) scale(0.95); }
-}
+      to {
+        transform: translate(60px, 60px);
+      }
+    }
 
-.hero-content {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 4rem; align-items: center;
-  position: relative; z-index: 1;
-}
+    /* Orbes de fondo */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
 
-.hero-left { display: flex; flex-direction: column; gap: 2rem; }
+    .orb-1 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(124, 58, 237, 0.25) 0%, transparent 70%);
+      top: -100px;
+      left: -150px;
+      animation: orbFloat 8s ease-in-out infinite;
+    }
 
-.hero-badge {
-  display: inline-flex; align-items: center; gap: 0.5rem;
-  background: rgba(124,58,237,0.15);
-  border: 1px solid rgba(124,58,237,0.4);
-  padding: 0.4rem 1rem; border-radius: 20px;
-  font-family: var(--pixel); font-size: 0.45rem;
-  color: var(--violet-light);
-  width: fit-content;
-  animation: badgePulse 2s ease-in-out infinite;
-}
-@keyframes badgePulse {
-  0%, 100% { border-color: rgba(124,58,237,0.4); }
-  50% { border-color: rgba(124,58,237,0.8); box-shadow: 0 0 15px rgba(124,58,237,0.3); }
-}
+    .orb-2 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(6, 182, 212, 0.2) 0%, transparent 70%);
+      top: 50%;
+      right: -100px;
+      animation: orbFloat 10s ease-in-out infinite reverse;
+    }
 
-.hero-title {
-  font-family: var(--pixel);
-  font-size: clamp(1.1rem, 3vw, 1.7rem);
-  line-height: 1.8;
-  color: white;
-}
-.hero-title .line-1 { color: var(--violet-light); }
-.hero-title .line-2 { color: var(--cyan-light); }
-.hero-title .line-3 { color: var(--yellow); }
+    .orb-3 {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(34, 197, 94, 0.15) 0%, transparent 70%);
+      bottom: 0;
+      left: 40%;
+      animation: orbFloat 12s ease-in-out infinite 2s;
+    }
 
-.hero-subtitle {
-  font-size: 1.1rem; font-weight: 700;
-  color: var(--text-dim); line-height: 1.6;
-  max-width: 480px;
-}
-.hero-subtitle strong { color: var(--text); }
+    @keyframes orbFloat {
 
-.hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+      0%,
+      100% {
+        transform: translate(0, 0) scale(1);
+      }
 
-.hero-stats {
-  display: flex; gap: 2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--border);
-}
-.hero-stat {}
-.hero-stat-num {
-  font-family: var(--pixel); font-size: 1rem;
-  display: block; margin-bottom: 0.3rem;
-}
-.hero-stat-label { font-size: 0.8rem; color: var(--text-dim); font-weight: 700; }
+      33% {
+        transform: translate(30px, -20px) scale(1.05);
+      }
 
-/* Panel del personaje/juego en el hero */
-.hero-right {
-  display: flex; justify-content: center; align-items: center;
-}
+      66% {
+        transform: translate(-20px, 20px) scale(0.95);
+      }
+    }
 
-.game-preview {
-  width: 100%;
-  max-width: 480px;
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 0 40px rgba(124,58,237,0.2), 0 20px 60px rgba(0,0,0,0.5);
-  position: relative;
-  animation: cardFloat 4s ease-in-out infinite;
-}
+    .hero-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
 
-@keyframes cardFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
 
-.game-preview-header {
-  background: linear-gradient(135deg, var(--violet), #4c1d95);
-  padding: 1rem 1.25rem;
-  display: flex; align-items: center; justify-content: space-between;
-  font-family: var(--pixel); font-size: 0.5rem;
-  border-bottom: 1px solid rgba(124,58,237,0.5);
-}
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(124, 58, 237, 0.15);
+      border: 1px solid rgba(124, 58, 237, 0.4);
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-family: var(--pixel);
+      font-size: 0.45rem;
+      color: var(--violet-light);
+      width: fit-content;
+      animation: badgePulse 2s ease-in-out infinite;
+    }
 
-.window-dots { display: flex; gap: 6px; }
-.window-dots span {
-  width: 10px; height: 10px; border-radius: 50%;
-}
-.window-dots span:nth-child(1) { background: var(--red); }
-.window-dots span:nth-child(2) { background: var(--yellow); }
-.window-dots span:nth-child(3) { background: var(--green); }
+    @keyframes badgePulse {
 
-.game-preview-body { padding: 1.5rem; }
+      0%,
+      100% {
+        border-color: rgba(124, 58, 237, 0.4);
+      }
 
-/* Avatar pixel art ASCII-style */
-.avatar-display {
-  background: var(--bg2);
-  border: 2px solid var(--border);
-  border-radius: 12px;
-  padding: 1.25rem;
-  display: flex; gap: 1rem; align-items: flex-start;
-  margin-bottom: 1.25rem;
-}
+      50% {
+        border-color: rgba(124, 58, 237, 0.8);
+        box-shadow: 0 0 15px rgba(124, 58, 237, 0.3);
+      }
+    }
 
-.avatar-sprite {
-  width: 64px; height: 64px;
-  image-rendering: pixelated;
-  flex-shrink: 0;
-  position: relative;
-}
+    .hero-title {
+      font-family: var(--pixel);
+      font-size: clamp(1.1rem, 3vw, 1.7rem);
+      line-height: 1.8;
+      color: white;
+    }
 
-/* Pixel art avatar hecho con CSS */
-.pixel-avatar {
-  width: 64px; height: 64px;
-  display: grid;
-  grid-template-columns: repeat(8, 8px);
-  grid-template-rows: repeat(8, 8px);
-}
+    .hero-title .line-1 {
+      color: var(--violet-light);
+    }
 
-.avatar-info { flex: 1; }
-.avatar-name {
-  font-family: var(--pixel); font-size: 0.55rem;
-  color: var(--cyan); margin-bottom: 0.5rem;
-}
-.avatar-level {
-  font-size: 0.8rem; font-weight: 800; color: var(--text-dim);
-  margin-bottom: 0.75rem;
-}
-.avatar-level span { color: var(--yellow); }
+    .hero-title .line-2 {
+      color: var(--cyan-light);
+    }
 
-.xp-bar-wrap { margin-bottom: 0.5rem; }
-.xp-label {
-  font-size: 0.7rem; font-weight: 700; color: var(--text-dim);
-  display: flex; justify-content: space-between;
-  margin-bottom: 4px;
-}
-.bar-track {
-  height: 8px; background: rgba(255,255,255,0.1);
-  border-radius: 4px; overflow: hidden;
-}
-.bar-fill {
-  height: 100%; border-radius: 4px;
-  background: linear-gradient(90deg, var(--violet), var(--cyan));
-  transition: width 1s ease;
-  position: relative;
-}
-.bar-fill::after {
-  content: '';
-  position: absolute; top: 0; right: 0;
-  width: 4px; height: 100%;
-  background: white;
-  border-radius: 2px;
-  animation: barShine 1.5s ease-in-out infinite;
-}
-@keyframes barShine {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 1; }
-}
+    .hero-title .line-3 {
+      color: var(--yellow);
+    }
 
-.energy-bar .bar-fill { background: linear-gradient(90deg, var(--orange), var(--yellow)); }
-.energy-bar .bar-fill::after { background: var(--yellow); }
+    .hero-subtitle {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      line-height: 1.6;
+      max-width: 480px;
+    }
 
-.coins-display {
-  background: var(--bg3);
-  border: 1px solid rgba(250,204,21,0.3);
-  border-radius: 8px; padding: 0.75rem 1rem;
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 1.25rem;
-}
-.coins-left { display: flex; align-items: center; gap: 0.75rem; }
-.coin-big {
-  font-size: 1.8rem;
-  animation: coinSpin 3s linear infinite;
-}
-@keyframes coinSpin {
-  0% { transform: rotateY(0deg); }
-  50% { transform: rotateY(90deg); }
-  100% { transform: rotateY(0deg); }
-}
-.coins-amount-label { font-size: 0.75rem; color: var(--text-dim); font-weight: 700; }
-.coins-amount-num {
-  font-family: var(--pixel); font-size: 0.9rem; color: var(--yellow);
-  animation: countUp 1s ease-out forwards;
-}
+    .hero-subtitle strong {
+      color: var(--text);
+    }
 
-.missions-mini { display: flex; flex-direction: column; gap: 0.5rem; }
-.missions-mini-title {
-  font-family: var(--pixel); font-size: 0.45rem; color: var(--violet-light);
-  margin-bottom: 0.25rem;
-}
-.mission-item {
-  display: flex; align-items: center; gap: 0.75rem;
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 8px; padding: 0.6rem 0.875rem;
-  font-size: 0.8rem; font-weight: 700;
-  transition: all 0.2s;
-}
-.mission-item.done { border-color: rgba(34,197,94,0.4); background: rgba(34,197,94,0.05); }
-.mission-icon { font-size: 1rem; flex-shrink: 0; }
-.mission-text { flex: 1; }
-.mission-reward {
-  font-family: var(--pixel); font-size: 0.4rem; color: var(--yellow);
-  white-space: nowrap;
-}
-.mission-check {
-  font-size: 0.9rem;
-  color: var(--green);
-}
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
 
-/* ============================================
+    .hero-stats {
+      display: flex;
+      gap: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .hero-stat {}
+
+    .hero-stat-num {
+      font-family: var(--pixel);
+      font-size: 1rem;
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+
+    .hero-stat-label {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      font-weight: 700;
+    }
+
+    /* Panel del personaje/juego en el hero */
+    .hero-right {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .game-preview {
+      width: 100%;
+      max-width: 480px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 0 40px rgba(124, 58, 237, 0.2), 0 20px 60px rgba(0, 0, 0, 0.5);
+      position: relative;
+      animation: cardFloat 4s ease-in-out infinite;
+    }
+
+    @keyframes cardFloat {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .game-preview-header {
+      background: linear-gradient(135deg, var(--violet), #4c1d95);
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: var(--pixel);
+      font-size: 0.5rem;
+      border-bottom: 1px solid rgba(124, 58, 237, 0.5);
+    }
+
+    .window-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .window-dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .window-dots span:nth-child(1) {
+      background: var(--red);
+    }
+
+    .window-dots span:nth-child(2) {
+      background: var(--yellow);
+    }
+
+    .window-dots span:nth-child(3) {
+      background: var(--green);
+    }
+
+    .game-preview-body {
+      padding: 1.5rem;
+    }
+
+    /* Avatar pixel art ASCII-style */
+    .avatar-display {
+      background: var(--bg2);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      margin-bottom: 1.25rem;
+    }
+
+    .avatar-sprite {
+      width: 64px;
+      height: 64px;
+      image-rendering: pixelated;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    /* Pixel art avatar hecho con CSS */
+    .pixel-avatar {
+      width: 64px;
+      height: 64px;
+      display: grid;
+      grid-template-columns: repeat(8, 8px);
+      grid-template-rows: repeat(8, 8px);
+    }
+
+    .avatar-info {
+      flex: 1;
+    }
+
+    .avatar-name {
+      font-family: var(--pixel);
+      font-size: 0.55rem;
+      color: var(--cyan);
+      margin-bottom: 0.5rem;
+    }
+
+    .avatar-level {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--text-dim);
+      margin-bottom: 0.75rem;
+    }
+
+    .avatar-level span {
+      color: var(--yellow);
+    }
+
+    .xp-bar-wrap {
+      margin-bottom: 0.5rem;
+    }
+
+    .xp-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .bar-track {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--violet), var(--cyan));
+      transition: width 1s ease;
+      position: relative;
+    }
+
+    .bar-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 4px;
+      height: 100%;
+      background: white;
+      border-radius: 2px;
+      animation: barShine 1.5s ease-in-out infinite;
+    }
+
+    @keyframes barShine {
+
+      0%,
+      100% {
+        opacity: 0.3;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    .energy-bar .bar-fill {
+      background: linear-gradient(90deg, var(--orange), var(--yellow));
+    }
+
+    .energy-bar .bar-fill::after {
+      background: var(--yellow);
+    }
+
+    .coins-display {
+      background: var(--bg3);
+      border: 1px solid rgba(250, 204, 21, 0.3);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+
+    .coins-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .coin-big {
+      font-size: 1.8rem;
+      animation: coinSpin 3s linear infinite;
+    }
+
+    @keyframes coinSpin {
+      0% {
+        transform: rotateY(0deg);
+      }
+
+      50% {
+        transform: rotateY(90deg);
+      }
+
+      100% {
+        transform: rotateY(0deg);
+      }
+    }
+
+    .coins-amount-label {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      font-weight: 700;
+    }
+
+    .coins-amount-num {
+      font-family: var(--pixel);
+      font-size: 0.9rem;
+      color: var(--yellow);
+      animation: countUp 1s ease-out forwards;
+    }
+
+    .missions-mini {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .missions-mini-title {
+      font-family: var(--pixel);
+      font-size: 0.45rem;
+      color: var(--violet-light);
+      margin-bottom: 0.25rem;
+    }
+
+    .mission-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.6rem 0.875rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+
+    .mission-item.done {
+      border-color: rgba(34, 197, 94, 0.4);
+      background: rgba(34, 197, 94, 0.05);
+    }
+
+    .mission-icon {
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .mission-text {
+      flex: 1;
+    }
+
+    .mission-reward {
+      font-family: var(--pixel);
+      font-size: 0.4rem;
+      color: var(--yellow);
+      white-space: nowrap;
+    }
+
+    .mission-check {
+      font-size: 0.9rem;
+      color: var(--green);
+    }
+
+    /* ============================================
    5. STATS SECTION (TICKER)
 ============================================ */
-.stats-ticker {
-  background: linear-gradient(135deg, var(--violet), #4c1d95, var(--cyan), #0891b2);
-  background-size: 300% 100%;
-  animation: gradientShift 6s ease infinite;
-  padding: 1rem 0;
-  border-top: 1px solid rgba(124,58,237,0.5);
-  border-bottom: 1px solid rgba(6,182,212,0.5);
-  overflow: hidden; position: relative; z-index: 1;
-}
+    .stats-ticker {
+      background: linear-gradient(135deg, var(--violet), #4c1d95, var(--cyan), #0891b2);
+      background-size: 300% 100%;
+      animation: gradientShift 6s ease infinite;
+      padding: 1rem 0;
+      border-top: 1px solid rgba(124, 58, 237, 0.5);
+      border-bottom: 1px solid rgba(6, 182, 212, 0.5);
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+    }
 
-@keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
+    @keyframes gradientShift {
+      0% {
+        background-position: 0% 50%;
+      }
 
-.ticker-track {
-  display: flex; gap: 3rem;
-  animation: tickerScroll 30s linear infinite;
-  white-space: nowrap;
-}
-@keyframes tickerScroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
+      50% {
+        background-position: 100% 50%;
+      }
 
-.ticker-item {
-  display: flex; align-items: center; gap: 0.75rem;
-  font-family: var(--pixel); font-size: 0.5rem;
-  color: rgba(255,255,255,0.9); flex-shrink: 0;
-}
-.ticker-sep { color: rgba(255,255,255,0.5); }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
 
-/* ============================================
+    .ticker-track {
+      display: flex;
+      gap: 3rem;
+      animation: tickerScroll 30s linear infinite;
+      white-space: nowrap;
+    }
+
+    @keyframes tickerScroll {
+      from {
+        transform: translateX(0);
+      }
+
+      to {
+        transform: translateX(-50%);
+      }
+    }
+
+    .ticker-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: var(--pixel);
+      font-size: 0.5rem;
+      color: rgba(255, 255, 255, 0.9);
+      flex-shrink: 0;
+    }
+
+    .ticker-sep {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* ============================================
    6. SUBJECTS SECTION
 ============================================ */
-.subjects { padding: 5rem 0; position: relative; z-index: 1; }
+    .subjects {
+      padding: 5rem 0;
+      position: relative;
+      z-index: 1;
+    }
 
-.section-header { text-align: center; margin-bottom: 3.5rem; }
-.section-tag {
-  display: inline-block;
-  font-family: var(--pixel); font-size: 0.45rem;
-  color: var(--cyan); letter-spacing: 2px;
-  margin-bottom: 1rem;
-  padding: 0.4rem 1rem;
-  border: 1px solid rgba(6,182,212,0.3);
-  border-radius: 20px;
-  background: rgba(6,182,212,0.05);
-}
-.section-title {
-  font-family: var(--pixel); font-size: clamp(0.9rem, 2.5vw, 1.3rem);
-  line-height: 1.6; color: white; margin-bottom: 1rem;
-}
-.section-subtitle {
-  font-size: 1rem; color: var(--text-dim); font-weight: 700;
-  max-width: 600px; margin: 0 auto; line-height: 1.6;
-}
+    .section-header {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
 
-.subjects-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 1rem;
-}
+    .section-tag {
+      display: inline-block;
+      font-family: var(--pixel);
+      font-size: 0.45rem;
+      color: var(--cyan);
+      letter-spacing: 2px;
+      margin-bottom: 1rem;
+      padding: 0.4rem 1rem;
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      border-radius: 20px;
+      background: rgba(6, 182, 212, 0.05);
+    }
 
-.subject-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 12px; padding: 1.5rem 1rem;
-  text-align: center; cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative; overflow: hidden;
-}
-.subject-card::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: var(--accent);
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
-}
-.subject-card:hover::before { transform: scaleX(1); }
-.subject-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--accent);
-  box-shadow: 0 0 20px var(--glow);
-}
+    .section-title {
+      font-family: var(--pixel);
+      font-size: clamp(0.9rem, 2.5vw, 1.3rem);
+      line-height: 1.6;
+      color: white;
+      margin-bottom: 1rem;
+    }
 
-.subject-emoji { font-size: 2.5rem; display: block; margin-bottom: 0.75rem; }
-.subject-name {
-  font-family: var(--pixel); font-size: 0.5rem;
-  color: var(--text); line-height: 1.5;
-  margin-bottom: 0.5rem;
-}
-.subject-xp {
-  font-size: 0.75rem; font-weight: 800;
-  color: var(--text-dim);
-}
-.subject-xp span { color: var(--yellow); }
+    .section-subtitle {
+      font-size: 1rem;
+      color: var(--text-dim);
+      font-weight: 700;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
 
-/* ============================================
+    .subjects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+    }
+
+    .subject-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .subject-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .subject-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .subject-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: 0 0 20px var(--glow);
+    }
+
+    .subject-emoji {
+      font-size: 2.5rem;
+      display: block;
+      margin-bottom: 0.75rem;
+    }
+
+    .subject-name {
+      font-family: var(--pixel);
+      font-size: 0.5rem;
+      color: var(--text);
+      line-height: 1.5;
+      margin-bottom: 0.5rem;
+    }
+
+    .subject-xp {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--text-dim);
+    }
+
+    .subject-xp span {
+      color: var(--yellow);
+    }
+
+    /* ============================================
    7. FEATURES / MÓDULOS
 ============================================ */
-.features { padding: 5rem 0; position: relative; z-index: 1; }
+    .features {
+      padding: 5rem 0;
+      position: relative;
+      z-index: 1;
+    }
 
-.features-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.5rem;
-}
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
 
-.feature-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 16px; padding: 2rem;
-  transition: all 0.3s ease;
-  position: relative; overflow: hidden;
-}
-.feature-card::after {
-  content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(124,58,237,0.08) 0%, transparent 60%);
-  opacity: 0; transition: opacity 0.3s;
-  pointer-events: none;
-}
-.feature-card:hover::after { opacity: 1; }
-.feature-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--violet);
-  box-shadow: var(--glow-violet);
-}
+    .feature-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
 
-.feature-icon {
-  width: 56px; height: 56px;
-  background: linear-gradient(135deg, var(--violet), #4c1d95);
-  border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.5rem; margin-bottom: 1.25rem;
-  box-shadow: var(--glow-violet);
-}
-.feature-card.cyan .feature-icon { background: linear-gradient(135deg, var(--cyan), #0891b2); box-shadow: var(--glow-cyan); }
-.feature-card.green .feature-icon { background: linear-gradient(135deg, var(--green), #16a34a); box-shadow: var(--glow-green); }
-.feature-card.yellow .feature-icon { background: linear-gradient(135deg, var(--yellow), var(--orange)); box-shadow: 0 0 20px rgba(250,204,21,0.4); }
-.feature-card.pink .feature-icon { background: linear-gradient(135deg, var(--pink), #be185d); box-shadow: 0 0 20px rgba(236,72,153,0.4); }
-.feature-card.orange .feature-icon { background: linear-gradient(135deg, var(--orange), #ea580c); box-shadow: 0 0 20px rgba(249,115,22,0.4); }
+    .feature-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(124, 58, 237, 0.08) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
 
-.feature-title {
-  font-family: var(--pixel); font-size: 0.6rem;
-  color: var(--text); margin-bottom: 0.75rem; line-height: 1.6;
-}
-.feature-desc {
-  font-size: 0.9rem; color: var(--text-dim); line-height: 1.6; font-weight: 600;
-  margin-bottom: 1rem;
-}
-.feature-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-.feature-tag {
-  font-size: 0.7rem; font-weight: 800;
-  padding: 0.25rem 0.6rem; border-radius: 4px;
-  background: rgba(124,58,237,0.15);
-  color: var(--violet-light);
-  border: 1px solid rgba(124,58,237,0.2);
-}
+    .feature-card:hover::after {
+      opacity: 1;
+    }
 
-/* ============================================
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--violet);
+      box-shadow: var(--glow-violet);
+    }
+
+    .feature-icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--violet), #4c1d95);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--glow-violet);
+    }
+
+    .feature-card.cyan .feature-icon {
+      background: linear-gradient(135deg, var(--cyan), #0891b2);
+      box-shadow: var(--glow-cyan);
+    }
+
+    .feature-card.green .feature-icon {
+      background: linear-gradient(135deg, var(--green), #16a34a);
+      box-shadow: var(--glow-green);
+    }
+
+    .feature-card.yellow .feature-icon {
+      background: linear-gradient(135deg, var(--yellow), var(--orange));
+      box-shadow: 0 0 20px rgba(250, 204, 21, 0.4);
+    }
+
+    .feature-card.pink .feature-icon {
+      background: linear-gradient(135deg, var(--pink), #be185d);
+      box-shadow: 0 0 20px rgba(236, 72, 153, 0.4);
+    }
+
+    .feature-card.orange .feature-icon {
+      background: linear-gradient(135deg, var(--orange), #ea580c);
+      box-shadow: 0 0 20px rgba(249, 115, 22, 0.4);
+    }
+
+    .feature-title {
+      font-family: var(--pixel);
+      font-size: 0.6rem;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+      line-height: 1.6;
+    }
+
+    .feature-desc {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .feature-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .feature-tag {
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      background: rgba(124, 58, 237, 0.15);
+      color: var(--violet-light);
+      border: 1px solid rgba(124, 58, 237, 0.2);
+    }
+
+    /* ============================================
    8. JUEGOS SECTION
 ============================================ */
-.games { padding: 5rem 0; position: relative; z-index: 1; }
+    .games {
+      padding: 5rem 0;
+      position: relative;
+      z-index: 1;
+    }
 
-.games-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.5rem;
-}
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
 
-.game-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 16px; overflow: hidden;
-  transition: all 0.3s; cursor: pointer;
-  position: relative;
-}
-.game-card:hover { transform: translateY(-6px) scale(1.02); border-color: var(--cyan); box-shadow: var(--glow-cyan); }
+    .game-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.3s;
+      cursor: pointer;
+      position: relative;
+    }
 
-.game-card-banner {
-  height: 120px;
-  display: flex; align-items: center; justify-content: center;
-  position: relative; overflow: hidden;
-  font-size: 3.5rem;
-}
-.game-card-banner::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: var(--banner-bg);
-}
+    .game-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      border-color: var(--cyan);
+      box-shadow: var(--glow-cyan);
+    }
 
-/* pixel grid on banners */
-.game-card-banner::after {
-  content: '';
-  position: absolute; inset: 0;
-  background-image:
-    linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
-  background-size: 16px 16px;
-}
+    .game-card-banner {
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      font-size: 3.5rem;
+    }
 
-.game-card-banner span { position: relative; z-index: 1; animation: iconBounce 2s ease-in-out infinite; }
-@keyframes iconBounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
+    .game-card-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--banner-bg);
+    }
 
-.game-card-body { padding: 1.25rem; }
-.game-card-name {
-  font-family: var(--pixel); font-size: 0.55rem;
-  color: var(--text); margin-bottom: 0.5rem; line-height: 1.5;
-}
-.game-card-desc {
-  font-size: 0.8rem; color: var(--text-dim); font-weight: 600;
-  line-height: 1.5; margin-bottom: 1rem;
-}
-.game-card-meta {
-  display: flex; align-items: center; justify-content: space-between;
-}
-.game-card-subject {
-  font-size: 0.7rem; font-weight: 800;
-  padding: 0.2rem 0.5rem; border-radius: 4px;
-}
-.game-card-reward {
-  font-family: var(--pixel); font-size: 0.4rem; color: var(--yellow);
-}
+    /* pixel grid on banners */
+    .game-card-banner::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+      background-size: 16px 16px;
+    }
 
-/* ============================================
+    .game-card-banner span {
+      position: relative;
+      z-index: 1;
+      animation: iconBounce 2s ease-in-out infinite;
+    }
+
+    @keyframes iconBounce {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-6px);
+      }
+    }
+
+    .game-card-body {
+      padding: 1.25rem;
+    }
+
+    .game-card-name {
+      font-family: var(--pixel);
+      font-size: 0.55rem;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+      line-height: 1.5;
+    }
+
+    .game-card-desc {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      font-weight: 600;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+
+    .game-card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .game-card-subject {
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    .game-card-reward {
+      font-family: var(--pixel);
+      font-size: 0.4rem;
+      color: var(--yellow);
+    }
+
+    /* ============================================
    9. RANKING / PODIO PREVIEW
 ============================================ */
-.ranking-section { padding: 5rem 0; position: relative; z-index: 1; }
+    .ranking-section {
+      padding: 5rem 0;
+      position: relative;
+      z-index: 1;
+    }
 
-.ranking-preview {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 16px; overflow: hidden;
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 0;
-  box-shadow: 0 0 40px rgba(124,58,237,0.15);
-}
+    .ranking-preview {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      box-shadow: 0 0 40px rgba(124, 58, 237, 0.15);
+    }
 
-.ranking-left { padding: 2.5rem; border-right: 1px solid var(--border); }
-.ranking-title-small { font-family: var(--pixel); font-size: 0.5rem; color: var(--yellow); margin-bottom: 0.75rem; }
-.ranking-big-title { font-family: var(--pixel); font-size: 1.1rem; line-height: 1.7; color: white; margin-bottom: 1rem; }
-.ranking-desc { font-size: 0.95rem; color: var(--text-dim); font-weight: 700; line-height: 1.6; margin-bottom: 2rem; }
+    .ranking-left {
+      padding: 2.5rem;
+      border-right: 1px solid var(--border);
+    }
 
-.podio-display {
-  display: flex; align-items: flex-end; justify-content: center;
-  gap: 0.5rem; height: 160px; margin-top: 1rem;
-}
+    .ranking-title-small {
+      font-family: var(--pixel);
+      font-size: 0.5rem;
+      color: var(--yellow);
+      margin-bottom: 0.75rem;
+    }
 
-.podio-col { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
-.podio-avatar {
-  width: 40px; height: 40px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.3rem;
-  border: 2px solid var(--border);
-}
-.podio-col:nth-child(1) .podio-avatar { border-color: rgba(192,192,192,0.5); background: rgba(192,192,192,0.1); }
-.podio-col:nth-child(2) .podio-avatar { border-color: rgba(250,204,21,0.6); background: rgba(250,204,21,0.1); width: 50px; height: 50px; font-size: 1.6rem; }
-.podio-col:nth-child(3) .podio-avatar { border-color: rgba(205,127,50,0.5); background: rgba(205,127,50,0.1); }
+    .ranking-big-title {
+      font-family: var(--pixel);
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: white;
+      margin-bottom: 1rem;
+    }
 
-.podio-name { font-family: var(--pixel); font-size: 0.35rem; color: var(--text-dim); }
+    .ranking-desc {
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      font-weight: 700;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
 
-.podio-step {
-  border-radius: 8px 8px 0 0;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 0.75rem 1.5rem;
-  font-family: var(--pixel); font-size: 0.5rem;
-}
-.podio-col:nth-child(1) .podio-step { height: 80px; background: rgba(192,192,192,0.15); border: 1px solid rgba(192,192,192,0.3); color: #c0c0c0; }
-.podio-col:nth-child(2) .podio-step { height: 110px; background: rgba(250,204,21,0.15); border: 1px solid rgba(250,204,21,0.4); color: var(--yellow); }
-.podio-col:nth-child(3) .podio-step { height: 60px; background: rgba(205,127,50,0.15); border: 1px solid rgba(205,127,50,0.3); color: #cd7f32; }
+    .podio-display {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 0.5rem;
+      height: 160px;
+      margin-top: 1rem;
+    }
 
-.ranking-right { padding: 2.5rem; }
-.ranking-list { display: flex; flex-direction: column; gap: 0.75rem; }
-.ranking-item {
-  display: flex; align-items: center; gap: 1rem;
-  background: var(--bg3); border: 1px solid var(--border);
-  border-radius: 10px; padding: 0.875rem 1rem;
-  transition: all 0.2s;
-}
-.ranking-item:hover { border-color: var(--violet); transform: translateX(4px); }
-.ranking-num {
-  font-family: var(--pixel); font-size: 0.6rem;
-  width: 28px; text-align: center;
-}
-.ranking-num.gold { color: var(--yellow); }
-.ranking-num.silver { color: #c0c0c0; }
-.ranking-num.bronze { color: #cd7f32; }
-.ranking-avatar-small { font-size: 1.5rem; }
-.ranking-info { flex: 1; }
-.ranking-name { font-weight: 800; font-size: 0.9rem; margin-bottom: 0.2rem; }
-.ranking-grade { font-size: 0.75rem; color: var(--text-dim); font-weight: 700; }
-.ranking-coins {
-  font-family: var(--pixel); font-size: 0.45rem; color: var(--yellow);
-}
+    .podio-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
 
-/* ============================================
+    .podio-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      border: 2px solid var(--border);
+    }
+
+    .podio-col:nth-child(1) .podio-avatar {
+      border-color: rgba(192, 192, 192, 0.5);
+      background: rgba(192, 192, 192, 0.1);
+    }
+
+    .podio-col:nth-child(2) .podio-avatar {
+      border-color: rgba(250, 204, 21, 0.6);
+      background: rgba(250, 204, 21, 0.1);
+      width: 50px;
+      height: 50px;
+      font-size: 1.6rem;
+    }
+
+    .podio-col:nth-child(3) .podio-avatar {
+      border-color: rgba(205, 127, 50, 0.5);
+      background: rgba(205, 127, 50, 0.1);
+    }
+
+    .podio-name {
+      font-family: var(--pixel);
+      font-size: 0.35rem;
+      color: var(--text-dim);
+    }
+
+    .podio-step {
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1.5rem;
+      font-family: var(--pixel);
+      font-size: 0.5rem;
+    }
+
+    .podio-col:nth-child(1) .podio-step {
+      height: 80px;
+      background: rgba(192, 192, 192, 0.15);
+      border: 1px solid rgba(192, 192, 192, 0.3);
+      color: #c0c0c0;
+    }
+
+    .podio-col:nth-child(2) .podio-step {
+      height: 110px;
+      background: rgba(250, 204, 21, 0.15);
+      border: 1px solid rgba(250, 204, 21, 0.4);
+      color: var(--yellow);
+    }
+
+    .podio-col:nth-child(3) .podio-step {
+      height: 60px;
+      background: rgba(205, 127, 50, 0.15);
+      border: 1px solid rgba(205, 127, 50, 0.3);
+      color: #cd7f32;
+    }
+
+    .ranking-right {
+      padding: 2.5rem;
+    }
+
+    .ranking-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .ranking-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.875rem 1rem;
+      transition: all 0.2s;
+    }
+
+    .ranking-item:hover {
+      border-color: var(--violet);
+      transform: translateX(4px);
+    }
+
+    .ranking-num {
+      font-family: var(--pixel);
+      font-size: 0.6rem;
+      width: 28px;
+      text-align: center;
+    }
+
+    .ranking-num.gold {
+      color: var(--yellow);
+    }
+
+    .ranking-num.silver {
+      color: #c0c0c0;
+    }
+
+    .ranking-num.bronze {
+      color: #cd7f32;
+    }
+
+    .ranking-avatar-small {
+      font-size: 1.5rem;
+    }
+
+    .ranking-info {
+      flex: 1;
+    }
+
+    .ranking-name {
+      font-weight: 800;
+      font-size: 0.9rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .ranking-grade {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      font-weight: 700;
+    }
+
+    .ranking-coins {
+      font-family: var(--pixel);
+      font-size: 0.45rem;
+      color: var(--yellow);
+    }
+
+    /* ============================================
    10. HOW IT WORKS
 ============================================ */
-.how-it-works { padding: 5rem 0; position: relative; z-index: 1; }
+    .how-it-works {
+      padding: 5rem 0;
+      position: relative;
+      z-index: 1;
+    }
 
-.steps-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.5rem; margin-top: 3rem;
-}
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
 
-.step-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 16px; padding: 2rem;
-  text-align: center; position: relative;
-  transition: all 0.3s;
-}
-.step-card:hover { transform: translateY(-4px); border-color: var(--violet); box-shadow: var(--glow-violet); }
-.step-card::before {
-  content: '';
-  position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
-  width: 60px; height: 3px;
-  background: var(--accent-color);
-  border-radius: 0 0 4px 4px;
-}
+    .step-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+      position: relative;
+      transition: all 0.3s;
+    }
 
-.step-number {
-  width: 56px; height: 56px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--violet), #4c1d95);
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--pixel); font-size: 0.8rem; color: white;
-  margin: 0 auto 1.25rem;
-  box-shadow: var(--glow-violet);
-}
-.step-icon { font-size: 1.5rem; margin-bottom: 1rem; display: block; }
-.step-title {
-  font-family: var(--pixel); font-size: 0.6rem;
-  color: var(--text); margin-bottom: 0.75rem; line-height: 1.6;
-}
-.step-desc { font-size: 0.85rem; color: var(--text-dim); font-weight: 700; line-height: 1.6; }
+    .step-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--violet);
+      box-shadow: var(--glow-violet);
+    }
 
-.arrow-connector {
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.5rem; color: var(--violet-light);
-  margin-top: 1.75rem;
-}
+    .step-card::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background: var(--accent-color);
+      border-radius: 0 0 4px 4px;
+    }
 
-/* ============================================
+    .step-number {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--violet), #4c1d95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--pixel);
+      font-size: 0.8rem;
+      color: white;
+      margin: 0 auto 1.25rem;
+      box-shadow: var(--glow-violet);
+    }
+
+    .step-icon {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .step-title {
+      font-family: var(--pixel);
+      font-size: 0.6rem;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+      line-height: 1.6;
+    }
+
+    .step-desc {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      font-weight: 700;
+      line-height: 1.6;
+    }
+
+    .arrow-connector {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: var(--violet-light);
+      margin-top: 1.75rem;
+    }
+
+    /* ============================================
    11. CTA SECTION
 ============================================ */
-.cta-section {
-  padding: 6rem 0; position: relative; z-index: 1;
-  text-align: center;
-}
+    .cta-section {
+      padding: 6rem 0;
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
 
-.cta-box {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 24px; padding: 4rem 2rem;
-  max-width: 700px; margin: 0 auto;
-  position: relative; overflow: hidden;
-}
-.cta-box::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(ellipse at center, rgba(124,58,237,0.12) 0%, transparent 70%);
-  pointer-events: none;
-}
+    .cta-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 4rem 2rem;
+      max-width: 700px;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+    }
 
-.cta-emoji { font-size: 4rem; display: block; margin-bottom: 1.5rem; animation: ctaBounce 1.5s ease-in-out infinite; }
-@keyframes ctaBounce {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  25% { transform: translateY(-8px) rotate(-5deg); }
-  75% { transform: translateY(-8px) rotate(5deg); }
-}
+    .cta-box::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(124, 58, 237, 0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
 
-.cta-title {
-  font-family: var(--pixel); font-size: clamp(0.8rem, 2.5vw, 1.2rem);
-  line-height: 1.7; color: white; margin-bottom: 1rem;
-}
-.cta-title em { color: var(--yellow); font-style: normal; }
-.cta-subtitle { font-size: 1rem; color: var(--text-dim); font-weight: 700; margin-bottom: 2rem; line-height: 1.6; }
-.cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .cta-emoji {
+      font-size: 4rem;
+      display: block;
+      margin-bottom: 1.5rem;
+      animation: ctaBounce 1.5s ease-in-out infinite;
+    }
 
-/* ============================================
+    @keyframes ctaBounce {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(0deg);
+      }
+
+      25% {
+        transform: translateY(-8px) rotate(-5deg);
+      }
+
+      75% {
+        transform: translateY(-8px) rotate(5deg);
+      }
+    }
+
+    .cta-title {
+      font-family: var(--pixel);
+      font-size: clamp(0.8rem, 2.5vw, 1.2rem);
+      line-height: 1.7;
+      color: white;
+      margin-bottom: 1rem;
+    }
+
+    .cta-title em {
+      color: var(--yellow);
+      font-style: normal;
+    }
+
+    .cta-subtitle {
+      font-size: 1rem;
+      color: var(--text-dim);
+      font-weight: 700;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    .cta-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* ============================================
    12. FOOTER
 ============================================ */
-footer {
-  background: var(--bg2);
-  border-top: 1px solid var(--border);
-  padding: 3rem 0 2rem; position: relative; z-index: 1;
-}
+    footer {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      padding: 3rem 0 2rem;
+      position: relative;
+      z-index: 1;
+    }
 
-.footer-grid {
-  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 2.5rem; margin-bottom: 2rem;
-}
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 2.5rem;
+      margin-bottom: 2rem;
+    }
 
-.footer-brand {}
-.footer-brand-logo {
-  display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;
-}
-.footer-desc { font-size: 0.85rem; color: var(--text-dim); font-weight: 700; line-height: 1.6; max-width: 280px; }
+    .footer-brand {}
 
-.footer-section-title {
-  font-family: var(--pixel); font-size: 0.45rem;
-  color: var(--violet-light); margin-bottom: 1rem;
-}
-.footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
-.footer-links a {
-  color: var(--text-dim); text-decoration: none; font-size: 0.85rem; font-weight: 700;
-  transition: color 0.2s;
-}
-.footer-links a:hover { color: var(--text); }
+    .footer-brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
 
-.footer-bottom {
-  border-top: 1px solid var(--border);
-  padding-top: 1.5rem;
-  display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 1rem;
-}
-.footer-copy { font-size: 0.8rem; color: var(--text-dim); font-weight: 700; }
-.footer-made { font-size: 0.75rem; color: var(--text-dim); font-weight: 700; }
-.footer-made span { color: var(--red); }
+    .footer-desc {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      font-weight: 700;
+      line-height: 1.6;
+      max-width: 280px;
+    }
 
-/* ============================================
+    .footer-section-title {
+      font-family: var(--pixel);
+      font-size: 0.45rem;
+      color: var(--violet-light);
+      margin-bottom: 1rem;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .footer-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--text);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-copy {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      font-weight: 700;
+    }
+
+    .footer-made {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      font-weight: 700;
+    }
+
+    .footer-made span {
+      color: var(--red);
+    }
+
+    /* ============================================
    13. MODAL DE LOGIN / REGISTRO
 ============================================ */
-.modal-overlay {
-  position: fixed; inset: 0; z-index: 10000;
-  background: rgba(7, 7, 26, 0.85);
-  backdrop-filter: blur(8px);
-  display: flex; align-items: center; justify-content: center;
-  padding: 1rem;
-  opacity: 0; pointer-events: none;
-  transition: opacity 0.3s;
-}
-.modal-overlay.active { opacity: 1; pointer-events: all; }
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: rgba(7, 7, 26, 0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
 
-.modal {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 20px; padding: 2.5rem;
-  width: 100%; max-width: 440px;
-  position: relative;
-  transform: translateY(20px) scale(0.98);
-  transition: all 0.3s;
-  box-shadow: 0 0 60px rgba(124,58,237,0.3);
-}
-.modal-overlay.active .modal { transform: translateY(0) scale(1); }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
 
-.modal-close {
-  position: absolute; top: 1rem; right: 1rem;
-  background: rgba(255,255,255,0.1); border: none; border-radius: 50%;
-  width: 32px; height: 32px; cursor: pointer;
-  color: var(--text); font-size: 1rem;
-  display: flex; align-items: center; justify-content: center;
-  transition: background 0.2s;
-}
-.modal-close:hover { background: rgba(255,255,255,0.2); }
+    .modal {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 440px;
+      position: relative;
+      transform: translateY(20px) scale(0.98);
+      transition: all 0.3s;
+      box-shadow: 0 0 60px rgba(124, 58, 237, 0.3);
+    }
 
-.modal-logo { text-align: center; margin-bottom: 2rem; }
-.modal-logo-icon {
-  width: 64px; height: 64px;
-  background: linear-gradient(135deg, var(--violet), var(--cyan));
-  border-radius: 16px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 2rem; margin: 0 auto 0.75rem;
-  box-shadow: var(--glow-violet);
-}
-.modal-title { font-family: var(--pixel); font-size: 0.75rem; color: white; line-height: 1.6; }
-.modal-subtitle { font-size: 0.85rem; color: var(--text-dim); font-weight: 700; margin-top: 0.25rem; }
+    .modal-overlay.active .modal {
+      transform: translateY(0) scale(1);
+    }
 
-/* Tabs */
-.modal-tabs {
-  display: flex; background: var(--bg3);
-  border-radius: 10px; padding: 4px; margin-bottom: 1.5rem;
-}
-.modal-tab {
-  flex: 1; padding: 0.625rem;
-  border: none; background: none; cursor: pointer;
-  font-family: var(--pixel); font-size: 0.45rem;
-  color: var(--text-dim); border-radius: 7px;
-  transition: all 0.2s;
-}
-.modal-tab.active {
-  background: linear-gradient(135deg, var(--violet), #6d28d9);
-  color: white;
-  box-shadow: 0 2px 10px rgba(124,58,237,0.4);
-}
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      color: var(--text);
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
 
-.modal-form { display: flex; flex-direction: column; gap: 1rem; }
-.form-group { display: flex; flex-direction: column; gap: 0.4rem; }
-.form-label { font-family: var(--pixel); font-size: 0.4rem; color: var(--text-dim); }
-.form-input {
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 8px; padding: 0.75rem 1rem;
-  color: var(--text); font-family: var(--body); font-size: 0.9rem; font-weight: 700;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  outline: none;
-}
-.form-input:focus {
-  border-color: var(--violet);
-  box-shadow: 0 0 12px rgba(124,58,237,0.25);
-}
-.form-input::placeholder { color: var(--text-dim); }
+    .modal-close:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
 
-.form-select {
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 8px; padding: 0.75rem 1rem;
-  color: var(--text); font-family: var(--body); font-size: 0.9rem; font-weight: 700;
-  cursor: pointer; outline: none;
-  transition: border-color 0.2s;
-}
-.form-select:focus { border-color: var(--violet); }
+    .modal-logo {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
 
-.form-submit {
-  width: 100%; padding: 0.875rem;
-  background: linear-gradient(135deg, var(--violet), #6d28d9);
-  border: none; border-radius: 10px; cursor: pointer;
-  font-family: var(--pixel); font-size: 0.55rem; color: white;
-  box-shadow: 0 4px 20px rgba(124,58,237,0.4);
-  transition: all 0.2s;
-  margin-top: 0.5rem;
-}
-.form-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 30px rgba(124,58,237,0.6); }
-.form-submit:active { transform: translateY(0); }
+    .modal-logo-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--violet), var(--cyan));
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 0.75rem;
+      box-shadow: var(--glow-violet);
+    }
 
-.form-footer {
-  text-align: center; font-size: 0.8rem; color: var(--text-dim); font-weight: 700;
-  margin-top: 0.5rem;
-}
-.form-footer a { color: var(--violet-light); text-decoration: none; }
-.form-footer a:hover { text-decoration: underline; }
+    .modal-title {
+      font-family: var(--pixel);
+      font-size: 0.75rem;
+      color: white;
+      line-height: 1.6;
+    }
 
-/* ============================================
+    .modal-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      font-weight: 700;
+      margin-top: 0.25rem;
+    }
+
+    /* Tabs */
+    .modal-tabs {
+      display: flex;
+      background: var(--bg3);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-tab {
+      flex: 1;
+      padding: 0.625rem;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-family: var(--pixel);
+      font-size: 0.45rem;
+      color: var(--text-dim);
+      border-radius: 7px;
+      transition: all 0.2s;
+    }
+
+    .modal-tab.active {
+      background: linear-gradient(135deg, var(--violet), #6d28d9);
+      color: white;
+      box-shadow: 0 2px 10px rgba(124, 58, 237, 0.4);
+    }
+
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .form-label {
+      font-family: var(--pixel);
+      font-size: 0.4rem;
+      color: var(--text-dim);
+    }
+
+    .form-input {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: var(--text);
+      font-family: var(--body);
+      font-size: 0.9rem;
+      font-weight: 700;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+
+    .form-input:focus {
+      border-color: var(--violet);
+      box-shadow: 0 0 12px rgba(124, 58, 237, 0.25);
+    }
+
+    .form-input::placeholder {
+      color: var(--text-dim);
+    }
+
+    .form-select {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: var(--text);
+      font-family: var(--body);
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-select:focus {
+      border-color: var(--violet);
+    }
+
+    .form-submit {
+      width: 100%;
+      padding: 0.875rem;
+      background: linear-gradient(135deg, var(--violet), #6d28d9);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: var(--pixel);
+      font-size: 0.55rem;
+      color: white;
+      box-shadow: 0 4px 20px rgba(124, 58, 237, 0.4);
+      transition: all 0.2s;
+      margin-top: 0.5rem;
+    }
+
+    .form-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 30px rgba(124, 58, 237, 0.6);
+    }
+
+    .form-submit:active {
+      transform: translateY(0);
+    }
+
+    .form-footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      font-weight: 700;
+      margin-top: 0.5rem;
+    }
+
+    .form-footer a {
+      color: var(--violet-light);
+      text-decoration: none;
+    }
+
+    .form-footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* ============================================
    14. TOAST NOTIFICATIONS
 ============================================ */
-.toast-container {
-  position: fixed; bottom: 2rem; right: 2rem; z-index: 10001;
-  display: flex; flex-direction: column; gap: 0.75rem;
-}
-.toast {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 12px; padding: 1rem 1.25rem;
-  display: flex; align-items: center; gap: 0.75rem;
-  min-width: 280px; max-width: 380px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-  animation: toastIn 0.3s ease forwards;
-}
-@keyframes toastIn {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-.toast.out { animation: toastOut 0.3s ease forwards; }
-@keyframes toastOut {
-  from { transform: translateX(0); opacity: 1; }
-  to { transform: translateX(100%); opacity: 0; }
-}
+    .toast-container {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 10001;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
 
-.toast-icon { font-size: 1.25rem; flex-shrink: 0; }
-.toast-text { flex: 1; font-size: 0.85rem; font-weight: 700; }
+    .toast {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      min-width: 280px;
+      max-width: 380px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      animation: toastIn 0.3s ease forwards;
+    }
 
-/* ============================================
+    @keyframes toastIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .toast.out {
+      animation: toastOut 0.3s ease forwards;
+    }
+
+    @keyframes toastOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
+
+    .toast-icon {
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .toast-text {
+      flex: 1;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    /* ============================================
    15. FLOATING COINS ANIMATION
 ============================================ */
-.floating-coins {
-  position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  overflow: hidden;
-}
-.floating-coin {
-  position: absolute;
-  font-size: 1.5rem;
-  animation: floatCoin linear infinite;
-  opacity: 0;
-}
-@keyframes floatCoin {
-  0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-  10% { opacity: 0.4; }
-  90% { opacity: 0.2; }
-  100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
-}
+    .floating-coins {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
 
-/* ============================================
+    .floating-coin {
+      position: absolute;
+      font-size: 1.5rem;
+      animation: floatCoin linear infinite;
+      opacity: 0;
+    }
+
+    @keyframes floatCoin {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 0.4;
+      }
+
+      90% {
+        opacity: 0.2;
+      }
+
+      100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* ============================================
    16. RESPONSIVE
 ============================================ */
-@media (max-width: 768px) {
-  .nav-links { display: none; }
-  .menu-toggle { display: flex; }
-  .hero-content { grid-template-columns: 1fr; gap: 2.5rem; }
-  .hero-right { order: -1; }
-  .game-preview { max-width: 100%; }
-  .ranking-preview { grid-template-columns: 1fr; }
-  .ranking-left { border-right: none; border-bottom: 1px solid var(--border); }
-  .footer-grid { grid-template-columns: 1fr 1fr; }
-  .features-grid { grid-template-columns: 1fr; }
-  .hero-stats { gap: 1.25rem; }
-}
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
 
-@media (max-width: 480px) {
-  .footer-grid { grid-template-columns: 1fr; }
-  .hero-actions { flex-direction: column; }
-  .hero-actions .btn { width: 100%; justify-content: center; }
-  .cta-actions { flex-direction: column; align-items: center; }
-}
+      .menu-toggle {
+        display: flex;
+      }
 
-/* Scroll animation */
-.reveal {
-  opacity: 0; transform: translateY(30px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-.reveal.visible { opacity: 1; transform: translateY(0); }
+      .hero-content {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
 
-/* Pixel corners decoration */
-.pixel-corner::before {
-  content: '';
-  position: absolute; top: -2px; left: -2px;
-  width: 12px; height: 12px;
-  border-top: 2px solid var(--violet);
-  border-left: 2px solid var(--violet);
-}
-.pixel-corner::after {
-  content: '';
-  position: absolute; bottom: -2px; right: -2px;
-  width: 12px; height: 12px;
-  border-bottom: 2px solid var(--cyan);
-  border-right: 2px solid var(--cyan);
-}
+      .hero-right {
+        order: -1;
+      }
 
-/* Blinking cursor */
-.blink {
-  animation: blink 1s step-end infinite;
-}
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-</style>
+      .game-preview {
+        max-width: 100%;
+      }
+
+      .ranking-preview {
+        grid-template-columns: 1fr;
+      }
+
+      .ranking-left {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-stats {
+        gap: 1.25rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+      }
+
+      .hero-actions .btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .cta-actions {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+    /* Scroll animation */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Pixel corners decoration */
+    .pixel-corner::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      width: 12px;
+      height: 12px;
+      border-top: 2px solid var(--violet);
+      border-left: 2px solid var(--violet);
+    }
+
+    .pixel-corner::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 12px;
+      height: 12px;
+      border-bottom: 2px solid var(--cyan);
+      border-right: 2px solid var(--cyan);
+    }
+
+    /* Blinking cursor */
+    /* ── RESPONSIVE ADICIONAL ── */
+    @media (max-width: 900px) {
+      .hero {
+        padding: 5rem 0 3rem;
+      }
+
+      .hero-content {
+        gap: 2rem;
+      }
+
+      .hero-title {
+        font-size: clamp(0.85rem, 4vw, 1.2rem);
+      }
+
+      .subjects-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .games-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .steps-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .ranking-preview {
+        grid-template-columns: 1fr;
+      }
+
+      .ranking-left {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .hero-content {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-right {
+        order: -1;
+      }
+
+      .game-preview {
+        max-width: 100%;
+      }
+
+      .hero-stats {
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .hero-stat-num {
+        font-size: 0.8rem;
+      }
+
+      .games-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .steps-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-actions .btn {
+        display: none;
+      }
+
+      .coins-badge {
+        display: none;
+      }
+
+      .cta-box {
+        padding: 2.5rem 1.25rem;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+      }
+
+      .hero-actions .btn {
+        width: 100%;
+        justify-content: center;
+        display: inline-flex;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .subjects-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .game-preview-body {
+        padding: 1rem;
+      }
+
+      .avatar-display {
+        flex-direction: column;
+      }
+    }
+
+    c:\Users\dexterh\Downloads\photo_5037436763911162782_y.jpg c:\Users\dexterh\Downloads\photo_5037436763911162781_y.jpg c:\Users\dexterh\Downloads\photo_5037436763911162780_y.jpg
+  </style>
+
 </head>
+
 <body>
 
-<!-- ============================================
+  <!-- ============================================
      FLOATING COINS BACKGROUND
 ============================================ -->
-<div class="floating-coins" id="floatingCoins"></div>
+  <div class="floating-coins" id="floatingCoins"></div>
 
-<!-- ============================================
+  <!-- ============================================
      HEADER / NAV
 ============================================ -->
-<header>
-  <nav class="container">
-    <a href="#" class="nav-logo">
-      <div class="logo-icon">🎓</div>
-      <div class="logo-text">
-        <span>EduCoins</span>
-        <span>Aprende &amp; Gana</span>
+  <header>
+    <nav class="container">
+      <a href="#" class="nav-logo">
+        <div class="logo-icon">🎓</div>
+        <div class="logo-text">
+          <span>EduCoins</span>
+          <span>Aprende &amp; Gana</span>
+        </div>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#features">Módulos</a></li>
+        <li><a href="#juegos">Juegos</a></li>
+        <li><a href="#ranking">Ranking</a></li>
+        <li><a href="#como-funciona">¿Cómo funciona?</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div class="coins-badge">
+          <span class="coin-icon">🪙</span>
+          <span>0 EDU</span>
+        </div>
+        <a class="btn btn-outline" href="auth/login.html">Ingresar</a>
+        <a class="btn btn-violet" href="auth/registro.html">Registrarse</a>
+        <button class="menu-toggle" id="menuToggle" aria-label="Menú">
+          <span></span><span></span><span></span>
+        </button>
       </div>
-    </a>
+    </nav>
+  </header>
 
-    <ul class="nav-links">
-      <li><a href="#features">Módulos</a></li>
-      <li><a href="#juegos">Juegos</a></li>
-      <li><a href="#ranking">Ranking</a></li>
-      <li><a href="#como-funciona">¿Cómo funciona?</a></li>
-    </ul>
-
-    <div class="nav-actions">
-      <div class="coins-badge">
-        <span class="coin-icon">🪙</span>
-        <span>0 EDU</span>
-      </div>
-      <a class="btn btn-outline" href="auth/login.html">Ingresar</a>
-      <a class="btn btn-violet" href="auth/registro.html">Registrarse</a>
-      <button class="menu-toggle" id="menuToggle" aria-label="Menú">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </nav>
-</header>
-
-<!-- ============================================
+  <!-- ============================================
      HERO
 ============================================ -->
-<section class="hero">
-  <div class="hero-grid"></div>
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
-  <div class="orb orb-3"></div>
+  <section class="hero">
+    <div class="hero-grid"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
 
-  <div class="container">
-    <div class="hero-content">
-      <div class="hero-left">
-        <div class="hero-badge">
-          ⚡ PLATAFORMA EDUCATIVA #1 DE CHILE
-        </div>
-
-        <h1 class="hero-title">
-          <span class="line-1">¡ESTUDIA.</span>
-          <span class="line-2">JUEGA.</span>
-          <span class="line-3">GANA PREMIOS!</span>
-        </h1>
-
-        <p class="hero-subtitle">
-          La plataforma donde <strong>ganar monedas virtuales</strong> estudiando matemáticas, lenguaje, historia y más. Completa misiones, sube de nivel y <strong>canjea premios reales</strong>.
-        </p>
-
-        <div class="hero-actions">
-          <a class="btn btn-violet" href="auth/registro.html" style="font-size:0.6rem;padding:1rem 2rem;">
-            🚀 ¡Empezar Gratis!
-          </a>
-          <a class="btn btn-outline" href="auth/login.html">
-            👾 Ya tengo cuenta
-          </a>
-        </div>
-
-        <div class="hero-stats">
-          <div class="hero-stat">
-            <span class="hero-stat-num pixel glow-text-yellow">2.4K+</span>
-            <span class="hero-stat-label">Alumnos activos</span>
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-left">
+          <div class="hero-badge">
+            ⚡ PLATAFORMA EDUCATIVA #1 DE CHILE
           </div>
-          <div class="hero-stat">
-            <span class="hero-stat-num pixel glow-text-cyan">150K+</span>
-            <span class="hero-stat-label">Monedas ganadas</span>
-          </div>
-          <div class="hero-stat">
-            <span class="hero-stat-num pixel glow-text-green">98%</span>
-            <span class="hero-stat-label">Mejoran sus notas</span>
-          </div>
-        </div>
-      </div>
 
-      <div class="hero-right">
-        <div class="game-preview">
-          <div class="game-preview-header">
-            <div class="window-dots">
-              <span></span><span></span><span></span>
+          <h1 class="hero-title">
+            <span class="line-1">¡ESTUDIA.</span>
+            <span class="line-2">JUEGA.</span>
+            <span class="line-3">GANA PREMIOS!</span>
+          </h1>
+
+          <p class="hero-subtitle">
+            La plataforma donde <strong>ganar monedas virtuales</strong> estudiando matemáticas, lenguaje, historia y
+            más. Completa misiones, sube de nivel y <strong>canjea premios reales</strong>.
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn btn-violet" href="auth/registro.html" style="font-size:0.6rem;padding:1rem 2rem;">
+              🚀 ¡Empezar Gratis!
+            </a>
+            <a class="btn btn-outline" href="auth/login.html">
+              👾 Ya tengo cuenta
+            </a>
+          </div>
+
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <span class="hero-stat-num pixel glow-text-yellow">2.4K+</span>
+              <span class="hero-stat-label">Alumnos activos</span>
             </div>
-            <span>🎮 MI PANEL — Panel EduCoins</span>
-            <span style="color:var(--green)">● EN LÍNEA</span>
+            <div class="hero-stat">
+              <span class="hero-stat-num pixel glow-text-cyan">150K+</span>
+              <span class="hero-stat-label">Monedas ganadas</span>
+            </div>
+            <div class="hero-stat">
+              <span class="hero-stat-num pixel glow-text-green">98%</span>
+              <span class="hero-stat-label">Mejoran sus notas</span>
+            </div>
           </div>
-          <div class="game-preview-body">
+        </div>
 
-            <!-- Avatar + Info -->
-            <div class="avatar-display">
-              <div class="avatar-sprite" style="font-size:3.5rem;display:flex;align-items:center;justify-content:center;animation:iconBounce 2s ease-in-out infinite;">🐰</div>
-              <div class="avatar-info">
-                <div class="avatar-name">ConejitoStudio</div>
-                <div class="avatar-level">Nivel <span>12</span> · Grado 6° Básico</div>
-                <div class="xp-bar-wrap">
-                  <div class="xp-label"><span>XP</span><span>1,240 / 2,000</span></div>
-                  <div class="bar-track">
-                    <div class="bar-fill" style="width:62%"></div>
+        <div class="hero-right">
+          <div class="game-preview">
+            <div class="game-preview-header">
+              <div class="window-dots">
+                <span></span><span></span><span></span>
+              </div>
+              <span>🎮 MI PANEL — Panel EduCoins</span>
+              <span style="color:var(--green)">● EN LÍNEA</span>
+            </div>
+            <div class="game-preview-body">
+
+              <!-- Avatar + Info -->
+              <div class="avatar-display">
+                <div class="avatar-sprite"
+                  style="font-size:3.5rem;display:flex;align-items:center;justify-content:center;animation:iconBounce 2s ease-in-out infinite;">
+                  🐰</div>
+                <div class="avatar-info">
+                  <div class="avatar-name">ConejitoStudio</div>
+                  <div class="avatar-level">Nivel <span>12</span> · Grado 6° Básico</div>
+                  <div class="xp-bar-wrap">
+                    <div class="xp-label"><span>XP</span><span>1,240 / 2,000</span></div>
+                    <div class="bar-track">
+                      <div class="bar-fill" style="width:62%"></div>
+                    </div>
+                  </div>
+                  <div class="xp-bar-wrap energy-bar">
+                    <div class="xp-label"><span>⚡ Energía</span><span>80/100</span></div>
+                    <div class="bar-track">
+                      <div class="bar-fill" style="width:80%"></div>
+                    </div>
                   </div>
                 </div>
-                <div class="xp-bar-wrap energy-bar">
-                  <div class="xp-label"><span>⚡ Energía</span><span>80/100</span></div>
-                  <div class="bar-track">
-                    <div class="bar-fill" style="width:80%"></div>
+              </div>
+
+              <!-- Monedas -->
+              <div class="coins-display">
+                <div class="coins-left">
+                  <span class="coin-big">🪙</span>
+                  <div>
+                    <div class="coins-amount-label">MIS EDUCOINS</div>
+                    <div class="coins-amount-num" id="heroCoins">4,820</div>
                   </div>
                 </div>
+                <button class="btn btn-yellow btn-sm"
+                  style="background:linear-gradient(135deg,var(--yellow),var(--orange));color:#1a1a00;font-size:0.4rem;padding:0.5rem 0.875rem;font-family:var(--pixel);">
+                  🛒 TIENDA
+                </button>
               </div>
-            </div>
 
-            <!-- Monedas -->
-            <div class="coins-display">
-              <div class="coins-left">
-                <span class="coin-big">🪙</span>
-                <div>
-                  <div class="coins-amount-label">MIS EDUCOINS</div>
-                  <div class="coins-amount-num" id="heroCoins">4,820</div>
+              <!-- Misiones mini -->
+              <div class="missions-mini">
+                <div class="missions-mini-title">🎯 MISIONES DE HOY (5/8)</div>
+                <div class="mission-item done">
+                  <span class="mission-icon">✅</span>
+                  <span class="mission-text">Jugar 3 juegos educativos</span>
+                  <span class="mission-reward">+150 🪙</span>
+                </div>
+                <div class="mission-item done">
+                  <span class="mission-icon">✅</span>
+                  <span class="mission-text">Trivia de Historia de Chile</span>
+                  <span class="mission-reward">+80 🪙</span>
+                </div>
+                <div class="mission-item">
+                  <span class="mission-icon">📝</span>
+                  <span class="mission-text">Subir tarea de Matemáticas</span>
+                  <span class="mission-reward">+200 🪙</span>
                 </div>
               </div>
-              <button class="btn btn-yellow btn-sm" style="background:linear-gradient(135deg,var(--yellow),var(--orange));color:#1a1a00;font-size:0.4rem;padding:0.5rem 0.875rem;font-family:var(--pixel);">
-                🛒 TIENDA
-              </button>
-            </div>
 
-            <!-- Misiones mini -->
-            <div class="missions-mini">
-              <div class="missions-mini-title">🎯 MISIONES DE HOY (5/8)</div>
-              <div class="mission-item done">
-                <span class="mission-icon">✅</span>
-                <span class="mission-text">Jugar 3 juegos educativos</span>
-                <span class="mission-reward">+150 🪙</span>
-              </div>
-              <div class="mission-item done">
-                <span class="mission-icon">✅</span>
-                <span class="mission-text">Trivia de Historia de Chile</span>
-                <span class="mission-reward">+80 🪙</span>
-              </div>
-              <div class="mission-item">
-                <span class="mission-icon">📝</span>
-                <span class="mission-text">Subir tarea de Matemáticas</span>
-                <span class="mission-reward">+200 🪙</span>
-              </div>
             </div>
-
           </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ============================================
+  <!-- ============================================
      TICKER STATS
 ============================================ -->
-<div class="stats-ticker">
-  <div class="ticker-track" id="tickerTrack">
-    <div class="ticker-item">🪙 +150 EDU ganados por trivia <span class="ticker-sep">✦</span></div>
-    <div class="ticker-item">🏆 PinguinoRocket subió a Nivel 20 <span class="ticker-sep">✦</span></div>
-    <div class="ticker-item">📚 OsitoMath completó 8 misiones diarias <span class="ticker-sep">✦</span></div>
-    <div class="ticker-item">⚔️ ZorritaLen ganó un duelo de Lenguaje <span class="ticker-sep">✦</span></div>
-    <div class="ticker-item">🎯 GatoHistoria marcó un 7.0 en Sociales <span class="ticker-sep">✦</span></div>
-    <div class="ticker-item">🎮 ConejitoMat desbloqueó logro MAESTRO <span class="ticker-sep">✦</span></div>
-    <div class="ticker-item">🪙 +150 EDU ganados por trivia <span class="ticker-sep">✦</span></div>
-    <div class="ticker-item">🏆 PinguinoRocket subió a Nivel 20 <span class="ticker-sep">✦</span></div>
-    <div class="ticker-item">📚 OsitoMath completó 8 misiones diarias <span class="ticker-sep">✦</span></div>
-    <div class="ticker-item">⚔️ ZorritaLen ganó un duelo de Lenguaje <span class="ticker-sep">✦</span></div>
-    <div class="ticker-item">🎯 GatoHistoria marcó un 7.0 en Sociales <span class="ticker-sep">✦</span></div>
-    <div class="ticker-item">🎮 ConejitoMat desbloqueó logro MAESTRO <span class="ticker-sep">✦</span></div>
+  <div class="stats-ticker">
+    <div class="ticker-track" id="tickerTrack">
+      <div class="ticker-item">🪙 +150 EDU ganados por trivia <span class="ticker-sep">✦</span></div>
+      <div class="ticker-item">🏆 PinguinoRocket subió a Nivel 20 <span class="ticker-sep">✦</span></div>
+      <div class="ticker-item">📚 OsitoMath completó 8 misiones diarias <span class="ticker-sep">✦</span></div>
+      <div class="ticker-item">⚔️ ZorritaLen ganó un duelo de Lenguaje <span class="ticker-sep">✦</span></div>
+      <div class="ticker-item">🎯 GatoHistoria marcó un 7.0 en Sociales <span class="ticker-sep">✦</span></div>
+      <div class="ticker-item">🎮 ConejitoMat desbloqueó logro MAESTRO <span class="ticker-sep">✦</span></div>
+      <div class="ticker-item">🪙 +150 EDU ganados por trivia <span class="ticker-sep">✦</span></div>
+      <div class="ticker-item">🏆 PinguinoRocket subió a Nivel 20 <span class="ticker-sep">✦</span></div>
+      <div class="ticker-item">📚 OsitoMath completó 8 misiones diarias <span class="ticker-sep">✦</span></div>
+      <div class="ticker-item">⚔️ ZorritaLen ganó un duelo de Lenguaje <span class="ticker-sep">✦</span></div>
+      <div class="ticker-item">🎯 GatoHistoria marcó un 7.0 en Sociales <span class="ticker-sep">✦</span></div>
+      <div class="ticker-item">🎮 ConejitoMat desbloqueó logro MAESTRO <span class="ticker-sep">✦</span></div>
+    </div>
   </div>
-</div>
 
-<!-- ============================================
+  <!-- ============================================
      ASIGNATURAS
 ============================================ -->
-<section class="subjects reveal" id="subjects">
-  <div class="container">
-    <div class="section-header">
-      <div class="section-tag">📚 ASIGNATURAS</div>
-      <h2 class="section-title">Gana monedas en <span class="glow-text-cyan">cada ramo</span></h2>
-      <p class="section-subtitle">Desde 1° a 8° básico, todas las asignaturas del currículo chileno te dan EduCoins.</p>
-    </div>
+  <section class="subjects reveal" id="subjects">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">📚 ASIGNATURAS</div>
+        <h2 class="section-title">Gana monedas en <span class="glow-text-cyan">cada ramo</span></h2>
+        <p class="section-subtitle">Desde 1° a 8° básico, todas las asignaturas del currículo chileno te dan EduCoins.
+        </p>
+      </div>
 
-    <div class="subjects-grid">
-      <div class="subject-card" style="--accent:var(--cyan);--glow:rgba(6,182,212,0.4)">
-        <span class="subject-emoji">➗</span>
-        <div class="subject-name">Matemáticas</div>
-        <div class="subject-xp">hasta <span>+500</span> EDU/día</div>
-      </div>
-      <div class="subject-card" style="--accent:var(--red);--glow:rgba(239,68,68,0.4)">
-        <span class="subject-emoji">📖</span>
-        <div class="subject-name">Lenguaje</div>
-        <div class="subject-xp">hasta <span>+400</span> EDU/día</div>
-      </div>
-      <div class="subject-card" style="--accent:var(--yellow);--glow:rgba(250,204,21,0.4)">
-        <span class="subject-emoji">🏛️</span>
-        <div class="subject-name">Historia</div>
-        <div class="subject-xp">hasta <span>+350</span> EDU/día</div>
-      </div>
-      <div class="subject-card" style="--accent:var(--green);--glow:rgba(34,197,94,0.4)">
-        <span class="subject-emoji">🔬</span>
-        <div class="subject-name">Ciencias</div>
-        <div class="subject-xp">hasta <span>+350</span> EDU/día</div>
-      </div>
-      <div class="subject-card" style="--accent:var(--orange);--glow:rgba(249,115,22,0.4)">
-        <span class="subject-emoji">🇬🇧</span>
-        <div class="subject-name">Inglés</div>
-        <div class="subject-xp">hasta <span>+300</span> EDU/día</div>
-      </div>
-      <div class="subject-card" style="--accent:var(--pink);--glow:rgba(236,72,153,0.4)">
-        <span class="subject-emoji">🎨</span>
-        <div class="subject-name">Artes</div>
-        <div class="subject-xp">hasta <span>+200</span> EDU/día</div>
-      </div>
-      <div class="subject-card" style="--accent:var(--violet);--glow:rgba(124,58,237,0.4)">
-        <span class="subject-emoji">🎵</span>
-        <div class="subject-name">Música</div>
-        <div class="subject-xp">hasta <span>+200</span> EDU/día</div>
-      </div>
-      <div class="subject-card" style="--accent:var(--cyan);--glow:rgba(6,182,212,0.4)">
-        <span class="subject-emoji">💻</span>
-        <div class="subject-name">Tecnología</div>
-        <div class="subject-xp">hasta <span>+250</span> EDU/día</div>
+      <div class="subjects-grid">
+        <div class="subject-card" style="--accent:var(--cyan);--glow:rgba(6,182,212,0.4)">
+          <span class="subject-emoji">➗</span>
+          <div class="subject-name">Matemáticas</div>
+          <div class="subject-xp">hasta <span>+500</span> EDU/día</div>
+        </div>
+        <div class="subject-card" style="--accent:var(--red);--glow:rgba(239,68,68,0.4)">
+          <span class="subject-emoji">📖</span>
+          <div class="subject-name">Lenguaje</div>
+          <div class="subject-xp">hasta <span>+400</span> EDU/día</div>
+        </div>
+        <div class="subject-card" style="--accent:var(--yellow);--glow:rgba(250,204,21,0.4)">
+          <span class="subject-emoji">🏛️</span>
+          <div class="subject-name">Historia</div>
+          <div class="subject-xp">hasta <span>+350</span> EDU/día</div>
+        </div>
+        <div class="subject-card" style="--accent:var(--green);--glow:rgba(34,197,94,0.4)">
+          <span class="subject-emoji">🔬</span>
+          <div class="subject-name">Ciencias</div>
+          <div class="subject-xp">hasta <span>+350</span> EDU/día</div>
+        </div>
+        <div class="subject-card" style="--accent:var(--orange);--glow:rgba(249,115,22,0.4)">
+          <span class="subject-emoji">🇬🇧</span>
+          <div class="subject-name">Inglés</div>
+          <div class="subject-xp">hasta <span>+300</span> EDU/día</div>
+        </div>
+        <div class="subject-card" style="--accent:var(--pink);--glow:rgba(236,72,153,0.4)">
+          <span class="subject-emoji">🎨</span>
+          <div class="subject-name">Artes</div>
+          <div class="subject-xp">hasta <span>+200</span> EDU/día</div>
+        </div>
+        <div class="subject-card" style="--accent:var(--violet);--glow:rgba(124,58,237,0.4)">
+          <span class="subject-emoji">🎵</span>
+          <div class="subject-name">Música</div>
+          <div class="subject-xp">hasta <span>+200</span> EDU/día</div>
+        </div>
+        <div class="subject-card" style="--accent:var(--cyan);--glow:rgba(6,182,212,0.4)">
+          <span class="subject-emoji">💻</span>
+          <div class="subject-name">Tecnología</div>
+          <div class="subject-xp">hasta <span>+250</span> EDU/día</div>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ============================================
+  <!-- ============================================
      FEATURES / MÓDULOS
 ============================================ -->
-<section class="features reveal" id="features">
-  <div class="container">
-    <div class="section-header">
-      <div class="section-tag">⚡ MÓDULOS</div>
-      <h2 class="section-title">Todo lo que <span class="glow-text-violet">necesitas</span></h2>
-      <p class="section-subtitle">Una plataforma completa pensada para niños chilenos de 1° a 8° básico.</p>
+  <section class="features reveal" id="features">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">⚡ MÓDULOS</div>
+        <h2 class="section-title">Todo lo que <span class="glow-text-violet">necesitas</span></h2>
+        <p class="section-subtitle">Una plataforma completa pensada para niños chilenos de 1° a 8° básico.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3 class="feature-title">MISIONES DIARIAS</h3>
+          <p class="feature-desc">8 misiones aleatorias cada día. Complétalas todas y desbloquea un bonus de energía
+            especial. ¡Nunca se repiten igual!</p>
+          <div class="feature-tags">
+            <span class="feature-tag">+Energía</span>
+            <span class="feature-tag">Racha de días</span>
+            <span class="feature-tag">Bonus x2</span>
+          </div>
+        </div>
+
+        <div class="feature-card cyan">
+          <div class="feature-icon">📅</div>
+          <h3 class="feature-title">CALENDARIO DE PRUEBAS</h3>
+          <p class="feature-desc">Registra tus evaluaciones, predice tu nota, sube la foto de la prueba corregida y
+            ¡recibe recompensas por cumplir tus metas!</p>
+          <div class="feature-tags">
+            <span class="feature-tag"
+              style="background:rgba(6,182,212,0.15);color:var(--cyan-light);border-color:rgba(6,182,212,0.2)">Predicción
+              de nota</span>
+            <span class="feature-tag"
+              style="background:rgba(6,182,212,0.15);color:var(--cyan-light);border-color:rgba(6,182,212,0.2)">Foto
+              prueba</span>
+            <span class="feature-tag"
+              style="background:rgba(6,182,212,0.15);color:var(--cyan-light);border-color:rgba(6,182,212,0.2)">Alertas
+              Telegram</span>
+          </div>
+        </div>
+
+        <div class="feature-card green">
+          <div class="feature-icon">📚</div>
+          <h3 class="feature-title">TAREAS DIARIAS</h3>
+          <p class="feature-desc">Sube o escribe tus tareas. El sistema las evalúa automáticamente. ¡Correcto = más
+            monedas, incorrecto = aprende y reintenta!</p>
+          <div class="feature-tags">
+            <span class="feature-tag"
+              style="background:rgba(34,197,94,0.15);color:var(--green);border-color:rgba(34,197,94,0.2)">Auto-evaluación</span>
+            <span class="feature-tag"
+              style="background:rgba(34,197,94,0.15);color:var(--green);border-color:rgba(34,197,94,0.2)">3
+              pistas/día</span>
+          </div>
+        </div>
+
+        <div class="feature-card yellow">
+          <div class="feature-icon">⚔️</div>
+          <h3 class="feature-title">DUELOS ENTRE AMIGOS</h3>
+          <p class="feature-desc">Desafía a otro alumno por asignatura. Apuesta EduCoins, responde preguntas y ¡el
+            ganador se lleva todo!</p>
+          <div class="feature-tags">
+            <span class="feature-tag"
+              style="background:rgba(250,204,21,0.15);color:var(--yellow);border-color:rgba(250,204,21,0.2)">Apuestas</span>
+            <span class="feature-tag"
+              style="background:rgba(250,204,21,0.15);color:var(--yellow);border-color:rgba(250,204,21,0.2)">Por
+              asignatura</span>
+            <span class="feature-tag"
+              style="background:rgba(250,204,21,0.15);color:var(--yellow);border-color:rgba(250,204,21,0.2)">Banco de
+              preguntas</span>
+          </div>
+        </div>
+
+        <div class="feature-card pink">
+          <div class="feature-icon">🏆</div>
+          <h3 class="feature-title">OBJETIVOS Y PREMIOS</h3>
+          <p class="feature-desc">Elige 3 objetivos mensuales: ropa, videojuegos, accesorios. ¡Canjea tus EduCoins por
+            giftcards reales!</p>
+          <div class="feature-tags">
+            <span class="feature-tag"
+              style="background:rgba(236,72,153,0.15);color:var(--pink);border-color:rgba(236,72,153,0.2)">Giftcards</span>
+            <span class="feature-tag"
+              style="background:rgba(236,72,153,0.15);color:var(--pink);border-color:rgba(236,72,153,0.2)">Premios
+              reales</span>
+          </div>
+        </div>
+
+        <div class="feature-card orange">
+          <div class="feature-icon">🆘</div>
+          <h3 class="feature-title">MATERIAL DE APOYO</h3>
+          <p class="feature-desc">Tablas de multiplicar, reglas de acentuación, fórmulas, línea de tiempo de Chile y
+            mucho más. ¡Todo en un solo lugar!</p>
+          <div class="feature-tags">
+            <span class="feature-tag"
+              style="background:rgba(249,115,22,0.15);color:var(--orange);border-color:rgba(249,115,22,0.2)">Matemáticas</span>
+            <span class="feature-tag"
+              style="background:rgba(249,115,22,0.15);color:var(--orange);border-color:rgba(249,115,22,0.2)">Lenguaje</span>
+            <span class="feature-tag"
+              style="background:rgba(249,115,22,0.15);color:var(--orange);border-color:rgba(249,115,22,0.2)">Historia</span>
+          </div>
+        </div>
+      </div>
     </div>
+  </section>
 
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">🎯</div>
-        <h3 class="feature-title">MISIONES DIARIAS</h3>
-        <p class="feature-desc">8 misiones aleatorias cada día. Complétalas todas y desbloquea un bonus de energía especial. ¡Nunca se repiten igual!</p>
-        <div class="feature-tags">
-          <span class="feature-tag">+Energía</span>
-          <span class="feature-tag">Racha de días</span>
-          <span class="feature-tag">Bonus x2</span>
-        </div>
-      </div>
-
-      <div class="feature-card cyan">
-        <div class="feature-icon">📅</div>
-        <h3 class="feature-title">CALENDARIO DE PRUEBAS</h3>
-        <p class="feature-desc">Registra tus evaluaciones, predice tu nota, sube la foto de la prueba corregida y ¡recibe recompensas por cumplir tus metas!</p>
-        <div class="feature-tags">
-          <span class="feature-tag" style="background:rgba(6,182,212,0.15);color:var(--cyan-light);border-color:rgba(6,182,212,0.2)">Predicción de nota</span>
-          <span class="feature-tag" style="background:rgba(6,182,212,0.15);color:var(--cyan-light);border-color:rgba(6,182,212,0.2)">Foto prueba</span>
-          <span class="feature-tag" style="background:rgba(6,182,212,0.15);color:var(--cyan-light);border-color:rgba(6,182,212,0.2)">Alertas Telegram</span>
-        </div>
-      </div>
-
-      <div class="feature-card green">
-        <div class="feature-icon">📚</div>
-        <h3 class="feature-title">TAREAS DIARIAS</h3>
-        <p class="feature-desc">Sube o escribe tus tareas. El sistema las evalúa automáticamente. ¡Correcto = más monedas, incorrecto = aprende y reintenta!</p>
-        <div class="feature-tags">
-          <span class="feature-tag" style="background:rgba(34,197,94,0.15);color:var(--green);border-color:rgba(34,197,94,0.2)">Auto-evaluación</span>
-          <span class="feature-tag" style="background:rgba(34,197,94,0.15);color:var(--green);border-color:rgba(34,197,94,0.2)">3 pistas/día</span>
-        </div>
-      </div>
-
-      <div class="feature-card yellow">
-        <div class="feature-icon">⚔️</div>
-        <h3 class="feature-title">DUELOS ENTRE AMIGOS</h3>
-        <p class="feature-desc">Desafía a otro alumno por asignatura. Apuesta EduCoins, responde preguntas y ¡el ganador se lleva todo!</p>
-        <div class="feature-tags">
-          <span class="feature-tag" style="background:rgba(250,204,21,0.15);color:var(--yellow);border-color:rgba(250,204,21,0.2)">Apuestas</span>
-          <span class="feature-tag" style="background:rgba(250,204,21,0.15);color:var(--yellow);border-color:rgba(250,204,21,0.2)">Por asignatura</span>
-          <span class="feature-tag" style="background:rgba(250,204,21,0.15);color:var(--yellow);border-color:rgba(250,204,21,0.2)">Banco de preguntas</span>
-        </div>
-      </div>
-
-      <div class="feature-card pink">
-        <div class="feature-icon">🏆</div>
-        <h3 class="feature-title">OBJETIVOS Y PREMIOS</h3>
-        <p class="feature-desc">Elige 3 objetivos mensuales: ropa, videojuegos, accesorios. ¡Canjea tus EduCoins por giftcards reales!</p>
-        <div class="feature-tags">
-          <span class="feature-tag" style="background:rgba(236,72,153,0.15);color:var(--pink);border-color:rgba(236,72,153,0.2)">Giftcards</span>
-          <span class="feature-tag" style="background:rgba(236,72,153,0.15);color:var(--pink);border-color:rgba(236,72,153,0.2)">Premios reales</span>
-        </div>
-      </div>
-
-      <div class="feature-card orange">
-        <div class="feature-icon">🆘</div>
-        <h3 class="feature-title">MATERIAL DE APOYO</h3>
-        <p class="feature-desc">Tablas de multiplicar, reglas de acentuación, fórmulas, línea de tiempo de Chile y mucho más. ¡Todo en un solo lugar!</p>
-        <div class="feature-tags">
-          <span class="feature-tag" style="background:rgba(249,115,22,0.15);color:var(--orange);border-color:rgba(249,115,22,0.2)">Matemáticas</span>
-          <span class="feature-tag" style="background:rgba(249,115,22,0.15);color:var(--orange);border-color:rgba(249,115,22,0.2)">Lenguaje</span>
-          <span class="feature-tag" style="background:rgba(249,115,22,0.15);color:var(--orange);border-color:rgba(249,115,22,0.2)">Historia</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============================================
+  <!-- ============================================
      JUEGOS
 ============================================ -->
-<section class="games reveal" id="juegos">
-  <div class="container">
-    <div class="section-header">
-      <div class="section-tag">🎮 JUEGOS</div>
-      <h2 class="section-title">Aprende <span class="glow-text-green">jugando</span></h2>
-      <p class="section-subtitle">5 juegos educativos únicos. Gana el bonus de multiplicación al finalizar y duplica tus recompensas.</p>
+  <section class="games reveal" id="juegos">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">🎮 JUEGOS</div>
+        <h2 class="section-title">Aprende <span class="glow-text-green">jugando</span></h2>
+        <p class="section-subtitle">5 juegos educativos únicos. Gana el bonus de multiplicación al finalizar y duplica
+          tus recompensas.</p>
+      </div>
+
+      <div class="games-grid">
+        <div class="game-card" onclick="showToast('🎮 CoinClik — ¡Próximamente!', 'info')">
+          <div class="game-card-banner" style="--banner-bg:linear-gradient(135deg,#1e3a8a,#1d4ed8)">
+            <span>💰</span>
+          </div>
+          <div class="game-card-body">
+            <div class="game-card-name">COINCLIK</div>
+            <div class="game-card-desc">¡Caen números! Presiona solo los de la categoría correcta: centenas, decenas o
+              unidades. La velocidad aumenta.</div>
+            <div class="game-card-meta">
+              <span class="game-card-subject"
+                style="background:rgba(29,78,216,0.2);color:#60a5fa;border:1px solid rgba(96,165,250,0.3);">Matemáticas</span>
+              <span class="game-card-reward">hasta +300 🪙</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="game-card" onclick="showToast('🃏 Memoria — ¡Próximamente!', 'info')">
+          <div class="game-card-banner" style="--banner-bg:linear-gradient(135deg,#7c2d12,#9a3412)">
+            <span>🃏</span>
+          </div>
+          <div class="game-card-body">
+            <div class="game-card-name">MEMORIA PIXEL</div>
+            <div class="game-card-desc">Memorise clásico con personajes 8-bit estilo pixel art años 80. Volteo de cartas
+              animado en CSS.</div>
+            <div class="game-card-meta">
+              <span class="game-card-subject"
+                style="background:rgba(154,52,18,0.2);color:#fb923c;border:1px solid rgba(251,146,60,0.3);">Memoria</span>
+              <span class="game-card-reward">hasta +200 🪙</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="game-card" onclick="showToast('❓ Trivia — ¡Próximamente!', 'info')">
+          <div class="game-card-banner" style="--banner-bg:linear-gradient(135deg,#14532d,#166534)">
+            <span>❓</span>
+          </div>
+          <div class="game-card-body">
+            <div class="game-card-name">TRIVIA CHILE</div>
+            <div class="game-card-desc">Historia, lenguaje, mapas, regiones de Chile y más. Verdadero o falso,
+              personajes históricos y preguntas con imagen.</div>
+            <div class="game-card-meta">
+              <span class="game-card-subject"
+                style="background:rgba(22,101,52,0.2);color:#4ade80;border:1px solid rgba(74,222,128,0.3);">Historia/Lenguaje</span>
+              <span class="game-card-reward">hasta +250 🪙</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="game-card" onclick="showToast('📝 Sinónimos — ¡Próximamente!', 'info')">
+          <div class="game-card-banner" style="--banner-bg:linear-gradient(135deg,#701a75,#86198f)">
+            <span>🔤</span>
+          </div>
+          <div class="game-card-body">
+            <div class="game-card-name">SINÓNIMOS</div>
+            <div class="game-card-desc">Une palabras con el mismo significado o selecciona el antónimo correcto.
+              ¡Expande tu vocabulario!</div>
+            <div class="game-card-meta">
+              <span class="game-card-subject"
+                style="background:rgba(134,25,143,0.2);color:#e879f9;border:1px solid rgba(232,121,249,0.3);">Lenguaje</span>
+              <span class="game-card-reward">hasta +180 🪙</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="game-card" onclick="showToast('🔢 Problemas — ¡Próximamente!', 'info')">
+          <div class="game-card-banner" style="--banner-bg:linear-gradient(135deg,#422006,#78350f)">
+            <span>🧮</span>
+          </div>
+          <div class="game-card-body">
+            <div class="game-card-name">PROBLEMAS</div>
+            <div class="game-card-desc">Resuelve problemas de texto con números aleatorios. Si fallas, se muestra el
+              procedimiento correcto paso a paso.</div>
+            <div class="game-card-meta">
+              <span class="game-card-subject"
+                style="background:rgba(120,53,15,0.2);color:#fbbf24;border:1px solid rgba(251,191,36,0.3);">Matemáticas</span>
+              <span class="game-card-reward">hasta +350 🪙</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bonus multiplicación preview -->
+      <div class="reveal" style="margin-top:2.5rem;">
+        <div
+          style="background:var(--card-bg);border:2px solid rgba(250,204,21,0.4);border-radius:16px;padding:2rem;text-align:center;position:relative;overflow:hidden;box-shadow:0 0 30px rgba(250,204,21,0.15);">
+          <div
+            style="position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(250,204,21,0.07) 0%,transparent 70%);pointer-events:none;">
+          </div>
+          <div style="font-size:2.5rem;margin-bottom:0.75rem;animation:ctaBounce 2s ease-in-out infinite;">⚡</div>
+          <div class="pixel" style="font-size:0.7rem;color:var(--yellow);margin-bottom:0.5rem;">BONUS DE MULTIPLICACIÓN
+          </div>
+          <p style="font-size:0.95rem;color:var(--text-dim);font-weight:700;line-height:1.6;">Al terminar cualquier
+            juego aparece una multiplicación 3×3. ¡Tienes 3 segundos para responder! Si aciertas, <strong
+              style="color:var(--yellow)">tus monedas se duplican</strong> 🪙×2</p>
+        </div>
+      </div>
     </div>
+  </section>
 
-    <div class="games-grid">
-      <div class="game-card" onclick="showToast('🎮 CoinClik — ¡Próximamente!', 'info')">
-        <div class="game-card-banner" style="--banner-bg:linear-gradient(135deg,#1e3a8a,#1d4ed8)">
-          <span>💰</span>
-        </div>
-        <div class="game-card-body">
-          <div class="game-card-name">COINCLIK</div>
-          <div class="game-card-desc">¡Caen números! Presiona solo los de la categoría correcta: centenas, decenas o unidades. La velocidad aumenta.</div>
-          <div class="game-card-meta">
-            <span class="game-card-subject" style="background:rgba(29,78,216,0.2);color:#60a5fa;border:1px solid rgba(96,165,250,0.3);">Matemáticas</span>
-            <span class="game-card-reward">hasta +300 🪙</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="game-card" onclick="showToast('🃏 Memoria — ¡Próximamente!', 'info')">
-        <div class="game-card-banner" style="--banner-bg:linear-gradient(135deg,#7c2d12,#9a3412)">
-          <span>🃏</span>
-        </div>
-        <div class="game-card-body">
-          <div class="game-card-name">MEMORIA PIXEL</div>
-          <div class="game-card-desc">Memorise clásico con personajes 8-bit estilo pixel art años 80. Volteo de cartas animado en CSS.</div>
-          <div class="game-card-meta">
-            <span class="game-card-subject" style="background:rgba(154,52,18,0.2);color:#fb923c;border:1px solid rgba(251,146,60,0.3);">Memoria</span>
-            <span class="game-card-reward">hasta +200 🪙</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="game-card" onclick="showToast('❓ Trivia — ¡Próximamente!', 'info')">
-        <div class="game-card-banner" style="--banner-bg:linear-gradient(135deg,#14532d,#166534)">
-          <span>❓</span>
-        </div>
-        <div class="game-card-body">
-          <div class="game-card-name">TRIVIA CHILE</div>
-          <div class="game-card-desc">Historia, lenguaje, mapas, regiones de Chile y más. Verdadero o falso, personajes históricos y preguntas con imagen.</div>
-          <div class="game-card-meta">
-            <span class="game-card-subject" style="background:rgba(22,101,52,0.2);color:#4ade80;border:1px solid rgba(74,222,128,0.3);">Historia/Lenguaje</span>
-            <span class="game-card-reward">hasta +250 🪙</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="game-card" onclick="showToast('📝 Sinónimos — ¡Próximamente!', 'info')">
-        <div class="game-card-banner" style="--banner-bg:linear-gradient(135deg,#701a75,#86198f)">
-          <span>🔤</span>
-        </div>
-        <div class="game-card-body">
-          <div class="game-card-name">SINÓNIMOS</div>
-          <div class="game-card-desc">Une palabras con el mismo significado o selecciona el antónimo correcto. ¡Expande tu vocabulario!</div>
-          <div class="game-card-meta">
-            <span class="game-card-subject" style="background:rgba(134,25,143,0.2);color:#e879f9;border:1px solid rgba(232,121,249,0.3);">Lenguaje</span>
-            <span class="game-card-reward">hasta +180 🪙</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="game-card" onclick="showToast('🔢 Problemas — ¡Próximamente!', 'info')">
-        <div class="game-card-banner" style="--banner-bg:linear-gradient(135deg,#422006,#78350f)">
-          <span>🧮</span>
-        </div>
-        <div class="game-card-body">
-          <div class="game-card-name">PROBLEMAS</div>
-          <div class="game-card-desc">Resuelve problemas de texto con números aleatorios. Si fallas, se muestra el procedimiento correcto paso a paso.</div>
-          <div class="game-card-meta">
-            <span class="game-card-subject" style="background:rgba(120,53,15,0.2);color:#fbbf24;border:1px solid rgba(251,191,36,0.3);">Matemáticas</span>
-            <span class="game-card-reward">hasta +350 🪙</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Bonus multiplicación preview -->
-    <div class="reveal" style="margin-top:2.5rem;">
-      <div style="background:var(--card-bg);border:2px solid rgba(250,204,21,0.4);border-radius:16px;padding:2rem;text-align:center;position:relative;overflow:hidden;box-shadow:0 0 30px rgba(250,204,21,0.15);">
-        <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(250,204,21,0.07) 0%,transparent 70%);pointer-events:none;"></div>
-        <div style="font-size:2.5rem;margin-bottom:0.75rem;animation:ctaBounce 2s ease-in-out infinite;">⚡</div>
-        <div class="pixel" style="font-size:0.7rem;color:var(--yellow);margin-bottom:0.5rem;">BONUS DE MULTIPLICACIÓN</div>
-        <p style="font-size:0.95rem;color:var(--text-dim);font-weight:700;line-height:1.6;">Al terminar cualquier juego aparece una multiplicación 3×3. ¡Tienes 3 segundos para responder! Si aciertas, <strong style="color:var(--yellow)">tus monedas se duplican</strong> 🪙×2</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============================================
+  <!-- ============================================
      RANKING / PODIO
 ============================================ -->
-<section class="ranking-section reveal" id="ranking">
-  <div class="container">
-    <div class="section-header">
-      <div class="section-tag">🏆 RANKING</div>
-      <h2 class="section-title">El <span class="glow-text-yellow">podio</span> de los mejores</h2>
-    </div>
+  <section class="ranking-section reveal" id="ranking">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">🏆 RANKING</div>
+        <h2 class="section-title">El <span class="glow-text-yellow">podio</span> de los mejores</h2>
+      </div>
 
-    <div class="ranking-preview">
-      <div class="ranking-left">
-        <div class="ranking-title-small">🥇 TOP MENSUAL</div>
-        <h3 class="ranking-big-title">¿PUEDES<br/>LLEGAR AL<br/>PODIO?</h3>
-        <p class="ranking-desc">Compite con alumnos de tu grado. El ranking se actualiza cada hora. Los del top 3 reciben recompensas especiales al final del mes.</p>
-        <a class="btn btn-violet" href="auth/login.html">Ver ranking completo →</a>
+      <div class="ranking-preview">
+        <div class="ranking-left">
+          <div class="ranking-title-small">🥇 TOP MENSUAL</div>
+          <h3 class="ranking-big-title">¿PUEDES<br />LLEGAR AL<br />PODIO?</h3>
+          <p class="ranking-desc">Compite con alumnos de tu grado. El ranking se actualiza cada hora. Los del top 3
+            reciben recompensas especiales al final del mes.</p>
+          <a class="btn btn-violet" href="auth/login.html">Ver ranking completo →</a>
 
-        <div class="podio-display">
-          <div class="podio-col">
-            <div class="podio-avatar">🦊</div>
-            <div class="podio-name">ZORRITA</div>
-            <div class="podio-step">
-              <div>🥈</div>
-              <div>8.2K</div>
+          <div class="podio-display">
+            <div class="podio-col">
+              <div class="podio-avatar">🦊</div>
+              <div class="podio-name">ZORRITA</div>
+              <div class="podio-step">
+                <div>🥈</div>
+                <div>8.2K</div>
+              </div>
+            </div>
+            <div class="podio-col">
+              <div class="podio-avatar">🐰</div>
+              <div class="podio-name">CONEJITO</div>
+              <div class="podio-step">
+                <div>🥇</div>
+                <div>12.5K</div>
+              </div>
+            </div>
+            <div class="podio-col">
+              <div class="podio-avatar">🐧</div>
+              <div class="podio-name">PINGUINO</div>
+              <div class="podio-step">
+                <div>🥉</div>
+                <div>6.8K</div>
+              </div>
             </div>
           </div>
-          <div class="podio-col">
-            <div class="podio-avatar">🐰</div>
-            <div class="podio-name">CONEJITO</div>
-            <div class="podio-step">
-              <div>🥇</div>
-              <div>12.5K</div>
+        </div>
+
+        <div class="ranking-right">
+          <div class="ranking-list">
+            <div class="ranking-item">
+              <div class="ranking-num gold">1</div>
+              <div class="ranking-avatar-small">🐰</div>
+              <div class="ranking-info">
+                <div class="ranking-name">ConejitoMath</div>
+                <div class="ranking-grade">6° Básico · Nivel 18 · 🔥 45 días de racha</div>
+              </div>
+              <div class="ranking-coins">12,540 🪙</div>
             </div>
-          </div>
-          <div class="podio-col">
-            <div class="podio-avatar">🐧</div>
-            <div class="podio-name">PINGUINO</div>
-            <div class="podio-step">
-              <div>🥉</div>
-              <div>6.8K</div>
+            <div class="ranking-item">
+              <div class="ranking-num silver">2</div>
+              <div class="ranking-avatar-small">🦊</div>
+              <div class="ranking-info">
+                <div class="ranking-name">ZorritaLen</div>
+                <div class="ranking-grade">5° Básico · Nivel 15 · 🔥 32 días de racha</div>
+              </div>
+              <div class="ranking-coins">8,230 🪙</div>
+            </div>
+            <div class="ranking-item">
+              <div class="ranking-num bronze">3</div>
+              <div class="ranking-avatar-small">🐧</div>
+              <div class="ranking-info">
+                <div class="ranking-name">PinguinoRocket</div>
+                <div class="ranking-grade">7° Básico · Nivel 20 · 🔥 28 días de racha</div>
+              </div>
+              <div class="ranking-coins">6,820 🪙</div>
+            </div>
+            <div class="ranking-item">
+              <div class="ranking-num" style="color:var(--text-dim)">4</div>
+              <div class="ranking-avatar-small">🐻</div>
+              <div class="ranking-info">
+                <div class="ranking-name">OsitoStar</div>
+                <div class="ranking-grade">4° Básico · Nivel 12 · 🔥 20 días de racha</div>
+              </div>
+              <div class="ranking-coins">5,100 🪙</div>
+            </div>
+            <div class="ranking-item">
+              <div class="ranking-num" style="color:var(--text-dim)">5</div>
+              <div class="ranking-avatar-small">🐱</div>
+              <div class="ranking-info">
+                <div class="ranking-name">GatoHistoria</div>
+                <div class="ranking-grade">8° Básico · Nivel 22 · 🔥 15 días de racha</div>
+              </div>
+              <div class="ranking-coins">4,750 🪙</div>
             </div>
           </div>
         </div>
       </div>
-
-      <div class="ranking-right">
-        <div class="ranking-list">
-          <div class="ranking-item">
-            <div class="ranking-num gold">1</div>
-            <div class="ranking-avatar-small">🐰</div>
-            <div class="ranking-info">
-              <div class="ranking-name">ConejitoMath</div>
-              <div class="ranking-grade">6° Básico · Nivel 18 · 🔥 45 días de racha</div>
-            </div>
-            <div class="ranking-coins">12,540 🪙</div>
-          </div>
-          <div class="ranking-item">
-            <div class="ranking-num silver">2</div>
-            <div class="ranking-avatar-small">🦊</div>
-            <div class="ranking-info">
-              <div class="ranking-name">ZorritaLen</div>
-              <div class="ranking-grade">5° Básico · Nivel 15 · 🔥 32 días de racha</div>
-            </div>
-            <div class="ranking-coins">8,230 🪙</div>
-          </div>
-          <div class="ranking-item">
-            <div class="ranking-num bronze">3</div>
-            <div class="ranking-avatar-small">🐧</div>
-            <div class="ranking-info">
-              <div class="ranking-name">PinguinoRocket</div>
-              <div class="ranking-grade">7° Básico · Nivel 20 · 🔥 28 días de racha</div>
-            </div>
-            <div class="ranking-coins">6,820 🪙</div>
-          </div>
-          <div class="ranking-item">
-            <div class="ranking-num" style="color:var(--text-dim)">4</div>
-            <div class="ranking-avatar-small">🐻</div>
-            <div class="ranking-info">
-              <div class="ranking-name">OsitoStar</div>
-              <div class="ranking-grade">4° Básico · Nivel 12 · 🔥 20 días de racha</div>
-            </div>
-            <div class="ranking-coins">5,100 🪙</div>
-          </div>
-          <div class="ranking-item">
-            <div class="ranking-num" style="color:var(--text-dim)">5</div>
-            <div class="ranking-avatar-small">🐱</div>
-            <div class="ranking-info">
-              <div class="ranking-name">GatoHistoria</div>
-              <div class="ranking-grade">8° Básico · Nivel 22 · 🔥 15 días de racha</div>
-            </div>
-            <div class="ranking-coins">4,750 🪙</div>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ============================================
+  <!-- ============================================
      CÓMO FUNCIONA
 ============================================ -->
-<section class="how-it-works reveal" id="como-funciona">
-  <div class="container">
-    <div class="section-header">
-      <div class="section-tag">🚀 GUÍA RÁPIDA</div>
-      <h2 class="section-title">¿Cómo <span class="glow-text-violet">funciona</span>?</h2>
-      <p class="section-subtitle">En 4 pasos simples ya estás ganando EduCoins.</p>
-    </div>
+  <section class="how-it-works reveal" id="como-funciona">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">🚀 GUÍA RÁPIDA</div>
+        <h2 class="section-title">¿Cómo <span class="glow-text-violet">funciona</span>?</h2>
+        <p class="section-subtitle">En 4 pasos simples ya estás ganando EduCoins.</p>
+      </div>
 
-    <div class="steps-grid">
-      <div class="step-card" style="--accent-color:var(--violet)">
-        <div class="step-number">1</div>
-        <span class="step-icon">👤</span>
-        <h3 class="step-title">CREA TU CUENTA</h3>
-        <p class="step-desc">Regístrate gratis, elige tu avatar 8-bit y configura tu grado actual (1° a 8° básico).</p>
-      </div>
-      <div class="step-card" style="--accent-color:var(--cyan)">
-        <div class="step-number" style="background:linear-gradient(135deg,var(--cyan),#0891b2);box-shadow:var(--glow-cyan)">2</div>
-        <span class="step-icon">📅</span>
-        <h3 class="step-title">REGISTRA TUS PRUEBAS</h3>
-        <p class="step-desc">Agrega tus evaluaciones al calendario y predice tu nota. El sistema te enviará alertas por Telegram.</p>
-      </div>
-      <div class="step-card" style="--accent-color:var(--green)">
-        <div class="step-number" style="background:linear-gradient(135deg,var(--green),#16a34a);box-shadow:var(--glow-green)">3</div>
-        <span class="step-icon">🎮</span>
-        <h3 class="step-title">JUEGA Y ESTUDIA</h3>
-        <p class="step-desc">Completa misiones diarias, juega los 5 minijuegos educativos y sube tus tareas para ganar EduCoins.</p>
-      </div>
-      <div class="step-card" style="--accent-color:var(--yellow)">
-        <div class="step-number" style="background:linear-gradient(135deg,var(--yellow),var(--orange));box-shadow:0 0 20px rgba(250,204,21,0.4)">4</div>
-        <span class="step-icon">🎁</span>
-        <h3 class="step-title">CANJEA PREMIOS</h3>
-        <p class="step-desc">Acumula EduCoins, sube al podio mensual y canjea tus monedas por giftcards y premios reales.</p>
+      <div class="steps-grid">
+        <div class="step-card" style="--accent-color:var(--violet)">
+          <div class="step-number">1</div>
+          <span class="step-icon">👤</span>
+          <h3 class="step-title">CREA TU CUENTA</h3>
+          <p class="step-desc">Regístrate gratis, elige tu avatar 8-bit y configura tu grado actual (1° a 8° básico).
+          </p>
+        </div>
+        <div class="step-card" style="--accent-color:var(--cyan)">
+          <div class="step-number"
+            style="background:linear-gradient(135deg,var(--cyan),#0891b2);box-shadow:var(--glow-cyan)">2</div>
+          <span class="step-icon">📅</span>
+          <h3 class="step-title">REGISTRA TUS PRUEBAS</h3>
+          <p class="step-desc">Agrega tus evaluaciones al calendario y predice tu nota. El sistema te enviará alertas
+            por Telegram.</p>
+        </div>
+        <div class="step-card" style="--accent-color:var(--green)">
+          <div class="step-number"
+            style="background:linear-gradient(135deg,var(--green),#16a34a);box-shadow:var(--glow-green)">3</div>
+          <span class="step-icon">🎮</span>
+          <h3 class="step-title">JUEGA Y ESTUDIA</h3>
+          <p class="step-desc">Completa misiones diarias, juega los 5 minijuegos educativos y sube tus tareas para ganar
+            EduCoins.</p>
+        </div>
+        <div class="step-card" style="--accent-color:var(--yellow)">
+          <div class="step-number"
+            style="background:linear-gradient(135deg,var(--yellow),var(--orange));box-shadow:0 0 20px rgba(250,204,21,0.4)">
+            4</div>
+          <span class="step-icon">🎁</span>
+          <h3 class="step-title">CANJEA PREMIOS</h3>
+          <p class="step-desc">Acumula EduCoins, sube al podio mensual y canjea tus monedas por giftcards y premios
+            reales.</p>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ============================================
+  <!-- ============================================
      CTA FINAL
 ============================================ -->
-<section class="cta-section reveal">
-  <div class="container">
-    <div class="cta-box pixel-corner">
-      <span class="cta-emoji">🚀</span>
-      <h2 class="cta-title">¿LISTO PARA<br/><em>ESTUDIAR Y GANAR</em>?</h2>
-      <p class="cta-subtitle">Únete a más de 2,400 alumnos chilenos que ya están ganando EduCoins. ¡Es completamente gratis!</p>
-      <div class="cta-actions">
-        <a class="btn btn-violet" href="auth/registro.html" style="font-size:0.6rem;padding:1rem 2.5rem;">
-          🎓 ¡Crear mi cuenta gratis!
-        </a>
-        <a class="btn btn-cyan" href="auth/login.html">
-          👾 Ya tengo cuenta →
-        </a>
+  <section class="cta-section reveal">
+    <div class="container">
+      <div class="cta-box pixel-corner">
+        <span class="cta-emoji">🚀</span>
+        <h2 class="cta-title">¿LISTO PARA<br /><em>ESTUDIAR Y GANAR</em>?</h2>
+        <p class="cta-subtitle">Únete a más de 2,400 alumnos chilenos que ya están ganando EduCoins. ¡Es completamente
+          gratis!</p>
+        <div class="cta-actions">
+          <a class="btn btn-violet" href="auth/registro.html" style="font-size:0.6rem;padding:1rem 2.5rem;">
+            🎓 ¡Crear mi cuenta gratis!
+          </a>
+          <a class="btn btn-cyan" href="auth/login.html">
+            👾 Ya tengo cuenta →
+          </a>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ============================================
+  <!-- ============================================
      FOOTER
 ============================================ -->
-<footer>
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <div class="footer-brand-logo">
-          <div class="logo-icon" style="width:36px;height:36px;font-size:1rem;">🎓</div>
-          <div class="logo-text">
-            <span style="color:var(--violet-light)">EduCoins</span>
-            <span style="color:var(--cyan);font-size:0.45rem;display:block">Aprende &amp; Gana</span>
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-brand-logo">
+            <div class="logo-icon" style="width:36px;height:36px;font-size:1rem;">🎓</div>
+            <div class="logo-text">
+              <span style="color:var(--violet-light)">EduCoins</span>
+              <span style="color:var(--cyan);font-size:0.45rem;display:block">Aprende &amp; Gana</span>
+            </div>
           </div>
+          <p class="footer-desc">Plataforma educativa gamificada para alumnos de enseñanza básica de Chile. Premiamos el
+            esfuerzo y el estudio.</p>
         </div>
-        <p class="footer-desc">Plataforma educativa gamificada para alumnos de enseñanza básica de Chile. Premiamos el esfuerzo y el estudio.</p>
+
+        <div>
+          <div class="footer-section-title">MÓDULOS</div>
+          <ul class="footer-links">
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">Misiones</a></li>
+            <li><a href="#">Calendario</a></li>
+            <li><a href="#">Tareas</a></li>
+            <li><a href="#">Duelos</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-section-title">JUEGOS</div>
+          <ul class="footer-links">
+            <li><a href="#">CoinClik</a></li>
+            <li><a href="#">Memoria</a></li>
+            <li><a href="#">Trivia Chile</a></li>
+            <li><a href="#">Sinónimos</a></li>
+            <li><a href="#">Problemas</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-section-title">PLATAFORMA</div>
+          <ul class="footer-links">
+            <li><a href="#">Ranking</a></li>
+            <li><a href="#">Tienda</a></li>
+            <li><a href="#">Estadísticas</a></li>
+            <li><a href="#">Ayudas</a></li>
+            <li><a href="#">Panel Admin</a></li>
+          </ul>
+        </div>
       </div>
 
-      <div>
-        <div class="footer-section-title">MÓDULOS</div>
-        <ul class="footer-links">
-          <li><a href="#">Dashboard</a></li>
-          <li><a href="#">Misiones</a></li>
-          <li><a href="#">Calendario</a></li>
-          <li><a href="#">Tareas</a></li>
-          <li><a href="#">Duelos</a></li>
-        </ul>
-      </div>
-
-      <div>
-        <div class="footer-section-title">JUEGOS</div>
-        <ul class="footer-links">
-          <li><a href="#">CoinClik</a></li>
-          <li><a href="#">Memoria</a></li>
-          <li><a href="#">Trivia Chile</a></li>
-          <li><a href="#">Sinónimos</a></li>
-          <li><a href="#">Problemas</a></li>
-        </ul>
-      </div>
-
-      <div>
-        <div class="footer-section-title">PLATAFORMA</div>
-        <ul class="footer-links">
-          <li><a href="#">Ranking</a></li>
-          <li><a href="#">Tienda</a></li>
-          <li><a href="#">Estadísticas</a></li>
-          <li><a href="#">Ayudas</a></li>
-          <li><a href="#">Panel Admin</a></li>
-        </ul>
+      <div class="footer-bottom">
+        <div class="footer-copy">© 2025 EduCoins — Plataforma educativa para Chile 🇨🇱</div>
+        <div class="footer-made">Hecho con <span>♥</span> para los niños chilenos · 1° a 8° Básico</div>
       </div>
     </div>
+  </footer>
 
-    <div class="footer-bottom">
-      <div class="footer-copy">© 2025 EduCoins — Plataforma educativa para Chile 🇨🇱</div>
-      <div class="footer-made">Hecho con <span>♥</span> para los niños chilenos · 1° a 8° Básico</div>
-    </div>
-  </div>
-</footer>
-
-<!-- ============================================
+  <!-- ============================================
      MODAL LOGIN / REGISTRO
 ============================================ -->
 
-<!-- Toast container -->
-<div class="toast-container" id="toastContainer"></div>
+  <!-- Toast container -->
+  <div class="toast-container" id="toastContainer"></div>
 
-<!-- ============================================
+  <!-- ============================================
      SCRIPTS
 ============================================ -->
-<script>
-// ============================================
-// ÍNDICE — index.js (inline)
-// 1. Coins flotantes (decoración)
-// 2. Modal login/registro
-// 3. Sistema de toasts
-// 4. Scroll reveal
-// 5. Contador animado (hero coins)
-// 6. Hover magnético en feature cards
-// ============================================
+  <script>
+    // ============================================
+    // ÍNDICE — index.js (inline)
+    // 1. Coins flotantes (decoración)
+    // 2. Modal login/registro
+    // 3. Sistema de toasts
+    // 4. Scroll reveal
+    // 5. Contador animado (hero coins)
+    // 6. Hover magnético en feature cards
+    // ============================================
 
-// 1. COINS FLOTANTES
-(function initFloatingCoins() {
-  const container = document.getElementById('floatingCoins');
-  const emojis = ['🪙', '⭐', '✨', '🎯', '📚'];
-  
-  function spawnCoin() {
-    const coin = document.createElement('div');
-    coin.className = 'floating-coin';
-    coin.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-    coin.style.left = Math.random() * 100 + 'vw';
-    coin.style.animationDuration = (8 + Math.random() * 12) + 's';
-    coin.style.animationDelay = (Math.random() * 4) + 's';
-    coin.style.fontSize = (0.8 + Math.random() * 1.2) + 'rem';
-    container.appendChild(coin);
-    setTimeout(() => coin.remove(), 24000);
-  }
-  
-  for (let i = 0; i < 8; i++) setTimeout(spawnCoin, i * 600);
-  setInterval(spawnCoin, 2500);
-})();
+    // 1. COINS FLOTANTES
+    (function initFloatingCoins() {
+      const container = document.getElementById('floatingCoins');
+      const emojis = ['🪙', '⭐', '✨', '🎯', '📚'];
+
+      function spawnCoin() {
+        const coin = document.createElement('div');
+        coin.className = 'floating-coin';
+        coin.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        coin.style.left = Math.random() * 100 + 'vw';
+        coin.style.animationDuration = (8 + Math.random() * 12) + 's';
+        coin.style.animationDelay = (Math.random() * 4) + 's';
+        coin.style.fontSize = (0.8 + Math.random() * 1.2) + 'rem';
+        container.appendChild(coin);
+        setTimeout(() => coin.remove(), 24000);
+      }
+
+      for (let i = 0; i < 8; i++) setTimeout(spawnCoin, i * 600);
+      setInterval(spawnCoin, 2500);
+    })();
 
 
-// 3. TOASTS
-function showToast(msg, type = 'info') {
-  const container = document.getElementById('toastContainer');
-  const toast = document.createElement('div');
-  toast.className = 'toast';
+    // 3. TOASTS
+    function showToast(msg, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
 
-  const icons = { success: '✅', warning: '⚠️', error: '❌', info: 'ℹ️' };
-  const colors = {
-    success: 'rgba(34,197,94,0.3)',
-    warning: 'rgba(250,204,21,0.3)',
-    error: 'rgba(239,68,68,0.3)',
-    info: 'rgba(6,182,212,0.3)'
-  };
+      const icons = { success: '✅', warning: '⚠️', error: '❌', info: 'ℹ️' };
+      const colors = {
+        success: 'rgba(34,197,94,0.3)',
+        warning: 'rgba(250,204,21,0.3)',
+        error: 'rgba(239,68,68,0.3)',
+        info: 'rgba(6,182,212,0.3)'
+      };
 
-  toast.style.borderColor = colors[type];
-  toast.innerHTML = `<span class="toast-icon">${icons[type]}</span><span class="toast-text">${msg}</span>`;
-  container.appendChild(toast);
+      toast.style.borderColor = colors[type];
+      toast.innerHTML = `<span class="toast-icon">${icons[type]}</span><span class="toast-text">${msg}</span>`;
+      container.appendChild(toast);
 
-  setTimeout(() => {
-    toast.classList.add('out');
-    setTimeout(() => toast.remove(), 300);
-  }, 3000);
-}
-
-// 4. SCROLL REVEAL
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      observer.unobserve(entry.target);
+      setTimeout(() => {
+        toast.classList.add('out');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
     }
-  });
-}, { threshold: 0.1 });
 
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    // 4. SCROLL REVEAL
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
 
-// 5. CONTADOR ANIMADO
-function animateCounter(element, target, duration = 1500) {
-  let start = 0;
-  const step = (timestamp) => {
-    if (!start) start = timestamp;
-    const progress = Math.min((timestamp - start) / duration, 1);
-    const val = Math.floor(progress * target);
-    element.textContent = val.toLocaleString('es-CL');
-    if (progress < 1) requestAnimationFrame(step);
-    else element.textContent = target.toLocaleString('es-CL');
-  };
-  requestAnimationFrame(step);
-}
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-window.addEventListener('load', () => {
-  const heroCoins = document.getElementById('heroCoins');
-  if (heroCoins) animateCounter(heroCoins, 4820);
-});
+    // 5. CONTADOR ANIMADO
+    function animateCounter(element, target, duration = 1500) {
+      let start = 0;
+      const step = (timestamp) => {
+        if (!start) start = timestamp;
+        const progress = Math.min((timestamp - start) / duration, 1);
+        const val = Math.floor(progress * target);
+        element.textContent = val.toLocaleString('es-CL');
+        if (progress < 1) requestAnimationFrame(step);
+        else element.textContent = target.toLocaleString('es-CL');
+      };
+      requestAnimationFrame(step);
+    }
 
-// 6. HOVER MAGNÉTICO EN FEATURE CARDS
-document.querySelectorAll('.feature-card').forEach(card => {
-  card.addEventListener('mousemove', (e) => {
-    const rect = card.getBoundingClientRect();
-    const mx = ((e.clientX - rect.left) / rect.width) * 100;
-    const my = ((e.clientY - rect.top) / rect.height) * 100;
-    card.style.setProperty('--mx', mx + '%');
-    card.style.setProperty('--my', my + '%');
-  });
-});
+    window.addEventListener('load', () => {
+      const heroCoins = document.getElementById('heroCoins');
+      if (heroCoins) animateCounter(heroCoins, 4820);
+    });
 
-// Duplicar ticker para scroll infinito suave
-(function() {
-  const track = document.getElementById('tickerTrack');
-  if (track) {
-    const clone = track.innerHTML;
-    track.innerHTML = clone + clone;
-  }
-})();
-</script>
+    // 6. HOVER MAGNÉTICO EN FEATURE CARDS
+    document.querySelectorAll('.feature-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const mx = ((e.clientX - rect.left) / rect.width) * 100;
+        const my = ((e.clientY - rect.top) / rect.height) * 100;
+        card.style.setProperty('--mx', mx + '%');
+        card.style.setProperty('--my', my + '%');
+      });
+    });
+
+    // Duplicar ticker para scroll infinito suave
+    (function () {
+      const track = document.getElementById('tickerTrack');
+      if (track) {
+        const clone = track.innerHTML;
+        track.innerHTML = clone + clone;
+      }
+    })();
+  </script>
 
 </body>
+
 </html>
