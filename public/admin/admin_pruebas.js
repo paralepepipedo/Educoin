@@ -49,6 +49,15 @@
         btn.classList.add('active');
         var panel = document.getElementById('tab-' + btn.dataset.tab);
         if (panel) panel.classList.add('active');
+        if (btn.dataset.tab === 'armador') {
+          window._editandoPruebaId = null;
+          document.getElementById('fPruebaNombre').value = '';
+          var btnActivar = document.getElementById('btnActivarPrueba');
+          if (btnActivar) {
+            btnActivar.textContent = '🚀 ACTIVAR EVALUACIÓN';
+            btnActivar.style.background = ''; btnActivar.style.color = ''; btnActivar.style.borderColor = '';
+          }
+        }
       });
     });
   }
@@ -230,6 +239,12 @@
     var btn = document.getElementById('btnActivarPrueba');
     btn.disabled = true; btn.textContent = 'Procesando...';
 
+    if (window._editandoPruebaId) {
+      const pruebaEditando = window._listaPruebasGlobal.find(x => x.id === window._editandoPruebaId);
+      if (!pruebaEditando || pruebaEditando.asignatura !== asig || pruebaEditando.grado !== Number(grado)) {
+        window._editandoPruebaId = null;
+      }
+    }
     let accionApi = window._editandoPruebaId ? 'editar_prueba_activa' : 'crear_prueba_activa';
 
     apiPost({
@@ -467,7 +482,16 @@
       contenedor.innerHTML = html;
     }
   }
-
+  document.getElementById('modalEditor').addEventListener('click', function (e) {
+    if (e.target === this) {
+      window._editandoPruebaId = null;
+      var btn = document.getElementById('btnActivarPrueba');
+      if (btn) {
+        btn.textContent = '🚀 ACTIVAR EVALUACIÓN';
+        btn.style.background = ''; btn.style.color = ''; btn.style.borderColor = '';
+      }
+    }
+  });
   window.abrirFormEdit = function (rowId, index) {
     document.getElementById(`view-q-${rowId}-${index}`).style.display = 'none';
     document.getElementById(`edit-q-${rowId}-${index}`).style.display = 'block';
@@ -478,6 +502,7 @@
     document.getElementById(`view-q-${rowId}-${index}`).style.display = 'block';
   };
 
+  // Mapa de cambios pendientes: clave = 'rowId-index', valor = { row_id, index, nueva_pregunta }
   window.guardarPreguntaVisual = function (rowId, index) {
     const contenedor = document.getElementById('listaEditorPreguntas');
     const filas = contenedor._filas;
@@ -489,21 +514,37 @@
     try { nuevaPregunta = extraerPreguntaDesdeFormulario(qOriginal, rowId, index); }
     catch (e) { return toast('❌ Error al leer el formulario: ' + e.message, 'error'); }
     if (!nuevaPregunta.pregunta) return toast('⚠️ El enunciado no puede estar vacío', 'warning');
+
+    var btn = document.querySelector(`#edit-q-${rowId}-${index} button[onclick*="guardarPreguntaVisual"]`);
+    if (btn) { btn.disabled = true; btn.textContent = 'Guardando...'; }
+
     apiPost({ action: 'editar_pregunta_banco', row_id: rowId, index, nueva_pregunta: nuevaPregunta })
       .then(() => {
-        toast('✅ Pregunta editada correctamente', 'success');
-        document.getElementById('modalEditor').style.display = 'none';
-        cargarEstadoAlmacen();
-      }).catch(e => toast('❌ ' + e.message, 'error'));
+        fila.preguntas[index] = Object.assign({}, qOriginal, nuevaPregunta);
+        cerrarFormEdit(rowId, index);
+        toast('✅ Pregunta guardada', 'success');
+      })
+      .catch(e => {
+        if (btn) { btn.disabled = false; btn.textContent = '💾 Guardar Cambios'; }
+        toast('❌ ' + e.message, 'error');
+      });
   };
+
 
   window.borrarPregunta = function (rowId, index) {
     if (!confirm('¿Seguro que quieres borrar esta pregunta? Esta acción no se puede deshacer.')) return;
     apiPost({ action: 'eliminar_pregunta_banco', row_id: rowId, index })
       .then(() => {
         toast('🗑️ Pregunta eliminada', 'success');
-        document.getElementById('modalEditor').style.display = 'none';
-        cargarEstadoAlmacen();
+        // Eliminar visualmente sin cerrar el modal
+        var viewEl = document.getElementById('view-q-' + rowId + '-' + index);
+        var editEl = document.getElementById('edit-q-' + rowId + '-' + index);
+        if (viewEl) viewEl.remove();
+        if (editEl) editEl.remove();
+        // Limpiar cambio pendiente si existía
+        var clave = rowId + '-' + index;
+        delete window._cambiosPendientes[clave];
+        actualizarBotonGuardarTodos();
       }).catch(e => toast('❌ ' + e.message, 'error'));
   };
 
@@ -558,11 +599,44 @@
       camposEspecificos = `<div style="margin-top:0.8rem;"><label style="${labelStyle}">Pares (Izquierda ↔ Derecha)</label><div id="pares-wrap-${rowId}-${index}">${paresHtml}</div></div>`;
     }
 
+    // Construir preview de opciones según tipo
+    let previewOpciones = '';
+    if (q.tipo === 'seleccion_multiple' && q.opciones) {
+      previewOpciones = q.opciones.map(op =>
+        `<div style="padding:0.4rem 0.7rem; border:1px solid ${op === q.correcta ? '#22c55e' : 'rgba(255,255,255,0.1)'}; border-radius:4px; font-size:0.8rem; color:${op === q.correcta ? '#22c55e' : 'var(--text-dim)'}; margin-bottom:0.3rem;">${op === q.correcta ? '✅ ' : ''}${escapeVal(op)}</div>`
+      ).join('');
+    } else if (q.tipo === 'verdadero_falso') {
+      previewOpciones = `
+        <div style="display:flex; gap:0.5rem;">
+          <div style="flex:1; padding:0.4rem 0.7rem; border:1px solid ${q.correcta === 'Verdadero' ? '#22c55e' : 'rgba(255,255,255,0.1)'}; border-radius:4px; font-size:0.8rem; color:${q.correcta === 'Verdadero' ? '#22c55e' : 'var(--text-dim)'}; text-align:center;">✅ Verdadero</div>
+          <div style="flex:1; padding:0.4rem 0.7rem; border:1px solid ${q.correcta === 'Falso' ? '#ef4444' : 'rgba(255,255,255,0.1)'}; border-radius:4px; font-size:0.8rem; color:${q.correcta === 'Falso' ? '#ef4444' : 'var(--text-dim)'}; text-align:center;">❌ Falso</div>
+        </div>`;
+    } else if (q.tipo === 'unir_conceptos' && q.pares) {
+      previewOpciones = `<div style="display:grid; grid-template-columns:1fr 1fr; gap:0.3rem;">` +
+        q.pares.map(p =>
+          `<div style="padding:0.3rem 0.6rem; background:rgba(168,85,247,0.08); border:1px solid rgba(168,85,247,0.2); border-radius:4px; font-size:0.75rem; color:var(--text-dim);">${escapeVal(p.izq)}</div>` +
+          `<div style="padding:0.3rem 0.6rem; background:rgba(168,85,247,0.08); border:1px solid rgba(168,85,247,0.2); border-radius:4px; font-size:0.75rem; color:var(--text-dim);">${escapeVal(p.der)}</div>`
+        ).join('') +
+        `</div>`;
+    }
+
     return `
       <div style="font-size:0.7rem; font-weight:bold; color:var(--primary); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.8rem;">Tipo: ${q.tipo.replace(/_/g, ' ')} 🔒</div>
-      <div style="margin-bottom:0.7rem;"><label style="${labelStyle}">Enunciado</label><textarea id="vf-enunciado-${rowId}-${index}" style="${inputStyle} resize:vertical; min-height:70px;">${escapeVal(q.pregunta)}</textarea></div>
-      <div style="margin-bottom:0.7rem;"><label style="${labelStyle}">Imagen URL (Opcional)</label><input type="text" id="vf-imagen-${rowId}-${index}" value="${escapeVal(q.imagen_url || '')}" placeholder="https://... o dejar vacío" style="${inputStyle}"></div>
-      ${camposEspecificos}`;
+      <div style="margin-bottom:0.7rem;"><label style="${labelStyle}">Enunciado</label><textarea id="vf-enunciado-${rowId}-${index}" style="${inputStyle} resize:vertical; min-height:70px;" oninput="actualizarPreviewPregunta('${rowId}','${index}')">${escapeVal(q.pregunta)}</textarea></div>
+      <div style="margin-bottom:0.7rem;">
+        <label style="${labelStyle}">Imagen URL (Opcional)</label>
+        <input type="text" id="vf-imagen-${rowId}-${index}" value="${escapeVal(q.imagen_url || '')}" placeholder="https://... o dejar vacío" style="${inputStyle}" oninput="actualizarPreviewPregunta('${rowId}','${index}')">
+      </div>
+      ${camposEspecificos}
+      <div style="margin-top:1rem; border-top:1px solid rgba(255,255,255,0.08); padding-top:1rem;">
+        <label style="${labelStyle}">👁️ Previsualización (como la ve el alumno)</label>
+        <div id="preview-q-${rowId}-${index}" style="background:#ffffff; border-radius:6px; padding:1rem; margin-top:0.4rem;">
+          <div style="font-size:11px; color:#888; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">${{ seleccion_multiple: 'Selección múltiple', verdadero_falso: 'Verdadero o Falso', unir_conceptos: 'Unir conceptos' }[q.tipo] || q.tipo}</div>
+          <div id="preview-enunciado-${rowId}-${index}" style="font-size:14px; color:#111; font-weight:bold; margin-bottom:0.6rem; line-height:1.6;">${escapeVal(q.pregunta)}</div>
+          <div id="preview-imagen-${rowId}-${index}" style="margin-bottom:0.6rem;">${q.imagen_url ? `<img src="${escapeVal(q.imagen_url)}" style="max-width:100%; border-radius:4px; border:1px solid #ddd;" onerror="this.style.display='none';this.nextSibling.style.display='block'"><span style="display:none;font-size:0.75rem;color:#ef4444;">⚠️ No se pudo cargar la imagen</span>` : ''}</div>
+          <div id="preview-opciones-${rowId}-${index}">${previewOpciones}</div>
+        </div>
+      </div>`;
   }
 
   function escapeVal(str) {
@@ -612,8 +686,25 @@
       return data;
     });
   }
+  window.actualizarPreviewPregunta = function (rowId, index) {
+    var enunciadoEl = document.getElementById('vf-enunciado-' + rowId + '-' + index);
+    var imagenEl = document.getElementById('vf-imagen-' + rowId + '-' + index);
+    var prevEnunciado = document.getElementById('preview-enunciado-' + rowId + '-' + index);
+    var prevImagen = document.getElementById('preview-imagen-' + rowId + '-' + index);
+    if (!enunciadoEl || !prevEnunciado) return;
+
+    prevEnunciado.textContent = enunciadoEl.value || '(sin enunciado)';
+
+    var url = imagenEl ? imagenEl.value.trim() : '';
+    if (url) {
+      prevImagen.innerHTML = '<img src="' + url + '" style="max-width:100%; border-radius:4px; border:1px solid #ddd;" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'block\'"><span style="display:none;font-size:0.75rem;color:#ef4444;">⚠️ No se pudo cargar la imagen</span>';
+    } else {
+      prevImagen.innerHTML = '';
+    }
+  };
 
 })(); // fin IIFE
+
 
 // ==========================================
 // HELPERS GLOBALES

@@ -384,6 +384,16 @@
       font-weight: bold;
     }
 
+    .bq-imagen {
+      width: 100%;
+      max-height: 200px;
+      object-fit: contain;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
     .opciones-lista {
       display: flex;
       flex-direction: column;
@@ -1222,9 +1232,13 @@
           bloque.className = 'bloque-q ' + (idx === 0 ? 'enfocado' : 'lejano');
           bloque.dataset.idx = idx;
           const tipoLabel = { seleccion_multiple: 'Selección múltiple', verdadero_falso: 'Verdadero o Falso', unir_conceptos: 'Unir conceptos' }[q.tipo] || q.tipo;
+          const imagenHtml = q.imagen_url
+            ? `<img src="${q.imagen_url}" class="bq-imagen" alt="Imagen de la pregunta" onerror="this.style.display='none'">`
+            : '';
           bloque.innerHTML = `
           <div class="bq-tipo">${tipoLabel}</div>
           <div class="bq-enunciado"><strong style="margin-right:5px;">${idx + 1}.</strong>${q.pregunta}</div>
+          ${imagenHtml}
           <div class="bq-respuesta" id="resp-${q.id_pregunta}"></div>`;
           lista.appendChild(bloque);
           const area = bloque.querySelector('.bq-respuesta');
@@ -1309,7 +1323,54 @@
       }
 
       function clickUnir(btn, q, correctos) {
-        if (entregada || btn.classList.contains('emparejado')) return;
+        if (entregada) return;
+
+        // Si el botón ya está emparejado → deshacer ese par y permitir reintento
+        if (btn.classList.contains('emparejado')) {
+          const qid = q.id_pregunta;
+          const colorIdx = parseInt(btn.dataset.colorIdx);
+          // Encontrar el par completo por colorIdx y deshacerlo
+          document.querySelectorAll(`[data-qid="${qid}"][data-color-idx="${colorIdx}"]`).forEach(function (el) {
+            el.classList.remove('emparejado', 'seleccionado');
+            el.dataset.colorIdx = '';
+            el.style.background = '';
+            el.style.borderColor = '';
+            el.style.borderWidth = '';
+            el.style.color = '';
+          });
+          // Eliminar ese par de respuestasAlumno
+          if (respuestasAlumno[qid]) {
+            respuestasAlumno[qid].splice(colorIdx, 1);
+            // Reindexar colorIdx de los pares restantes
+            const pares = respuestasAlumno[qid];
+            pares.forEach(function (par, newIdx) {
+              const color = COLORES_PARES[newIdx % COLORES_PARES.length];
+              document.querySelectorAll(`[data-qid="${qid}"].emparejado`).forEach(function (el) {
+                // Solo recolorear los que pertenecen al par en newIdx
+              });
+            });
+            // Redibujar todas las líneas con índices actualizados
+            redibujarLineas(qid);
+            // Recolorear botones emparejados restantes
+            document.querySelectorAll(`[data-qid="${qid}"].emparejado`).forEach(function (el) {
+              const idx = parseInt(el.dataset.colorIdx);
+              if (idx > colorIdx) {
+                el.dataset.colorIdx = idx - 1;
+                const color = COLORES_PARES[(idx - 1) % COLORES_PARES.length];
+                el.style.background = color.bg;
+                el.style.borderColor = color.border;
+                el.style.color = color.text;
+              }
+            });
+          }
+          // Limpiar selección izquierda pendiente si la hubiera
+          if (unirSelIzq[qid]) {
+            unirSelIzq[qid].el.classList.remove('seleccionado');
+            unirSelIzq[qid] = null;
+          }
+          actualizarDot(preguntas.findIndex(function (p) { return p.id_pregunta === qid; }));
+          return;
+        }
         const qid = q.id_pregunta;
         const col = btn.dataset.col;
         const val = btn.dataset.val;
