@@ -2038,6 +2038,48 @@
     @media (max-width: 768px) {
       .nav-links {
         display: none;
+        position: fixed;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background: rgba(7, 7, 26, 0.98);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border);
+        flex-direction: column;
+        padding: 1rem 1.5rem 1.5rem;
+        gap: 0.25rem;
+        z-index: 999;
+      }
+
+      .nav-links.open {
+        display: flex;
+      }
+
+      .nav-links a {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        border-radius: 8px;
+      }
+
+      .nav-mobile-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--border);
+      }
+
+      .nav-mobile-actions .btn {
+        width: 100%;
+        justify-content: center;
+        font-size: 0.55rem;
+      }
+
+      .nav-actions .btn-outline,
+      .nav-actions .btn-violet,
+      .nav-actions .coins-badge {
+        display: none;
       }
 
       .menu-toggle {
@@ -2294,6 +2336,16 @@
         </button>
       </div>
     </nav>
+    <!-- Menú móvil desplegable -->
+    <ul class="nav-links" id="mobileMenu">
+      <li><a href="#features">✨ Características</a></li>
+      <li><a href="#juegos">🎮 Juegos</a></li>
+      <li><a href="#como-funciona">🚀 Cómo funciona</a></li>
+      <div class="nav-mobile-actions">
+        <a class="btn btn-outline" href="auth/login.html">👾 Ingresar</a>
+        <a class="btn btn-violet" href="auth/registro.html">🎓 Registrarse gratis</a>
+      </div>
+    </ul>
   </header>
 
   <!-- ============================================
@@ -2966,7 +3018,26 @@
     // 5. Contador animado (hero coins)
     // 6. Hover magnético en feature cards
     // ============================================
-
+    // 0. MENÚ HAMBURGUESA
+    (function () {
+      var toggle = document.getElementById('menuToggle');
+      var menu = document.getElementById('mobileMenu');
+      if (!toggle || !menu) return;
+      toggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        menu.classList.toggle('open');
+      });
+      document.addEventListener('click', function (e) {
+        if (!menu.contains(e.target) && !toggle.contains(e.target)) {
+          menu.classList.remove('open');
+        }
+      });
+      menu.querySelectorAll('a').forEach(function (a) {
+        a.addEventListener('click', function () {
+          menu.classList.remove('open');
+        });
+      });
+    })();
     // 1. COINS FLOTANTES
     (function initFloatingCoins() {
       const container = document.getElementById('floatingCoins');
