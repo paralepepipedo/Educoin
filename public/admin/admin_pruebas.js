@@ -633,7 +633,7 @@
         <div id="preview-q-${rowId}-${index}" style="background:#ffffff; border-radius:6px; padding:1rem; margin-top:0.4rem;">
           <div style="font-size:11px; color:#888; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">${{ seleccion_multiple: 'Selección múltiple', verdadero_falso: 'Verdadero o Falso', unir_conceptos: 'Unir conceptos' }[q.tipo] || q.tipo}</div>
           <div id="preview-enunciado-${rowId}-${index}" style="font-size:14px; color:#111; font-weight:bold; margin-bottom:0.6rem; line-height:1.6;">${escapeVal(q.pregunta)}</div>
-          <div id="preview-imagen-${rowId}-${index}" style="margin-bottom:0.6rem;">${q.imagen_url ? `<img src="${escapeVal(q.imagen_url)}" style="max-width:100%; border-radius:4px; border:1px solid #ddd;" onerror="this.style.display='none';this.nextSibling.style.display='block'"><span style="display:none;font-size:0.75rem;color:#ef4444;">⚠️ No se pudo cargar la imagen</span>` : ''}</div>
+          <div id="preview-imagen-${rowId}-${index}" style="margin-bottom:0.6rem;">${q.imagen_url ? `<img src="${escapeVal(q.imagen_url)}" style="max-width:100%; border-radius:4px; border:1px solid #ddd;" onerror="this.style.display='none';if(this.nextSibling)this.nextSibling.style.display='block'"><span style="display:none;font-size:0.75rem;color:#ef4444;">⚠️ No se pudo cargar la imagen</span>` : ''}</div>
           <div id="preview-opciones-${rowId}-${index}">${previewOpciones}</div>
         </div>
       </div>`;
@@ -697,7 +697,7 @@
 
     var url = imagenEl ? imagenEl.value.trim() : '';
     if (url) {
-      prevImagen.innerHTML = '<img src="' + url + '" style="max-width:100%; border-radius:4px; border:1px solid #ddd;" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'block\'"><span style="display:none;font-size:0.75rem;color:#ef4444;">⚠️ No se pudo cargar la imagen</span>';
+      prevImagen.innerHTML = '<img src="' + url + '" style="max-width:100%; border-radius:4px; border:1px solid #ddd;" onerror="this.style.display=\'none\';if(this.nextSibling)this.nextSibling.style.display=\'block\'"><span style="display:none;font-size:0.75rem;color:#ef4444;">⚠️ No se pudo cargar la imagen</span>';
     } else {
       prevImagen.innerHTML = '';
     }
