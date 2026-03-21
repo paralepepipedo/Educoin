@@ -337,6 +337,34 @@ async function registrarIntento(body, clerkId) {
     );
   }
 
+  // 9. Verificar misiones vinculadas a evaluación IA
+  try {
+    const token = request.headers.get('Authorization') || '';
+    await fetch(new URL('/api/misiones', request.url).toString(), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token,
+      },
+      body: JSON.stringify({
+        action: 'verificar_trigger',
+        trigger: 'prueba_ia_completada',
+        juego_id: prueba_id,
+      }),
+    });
+  } catch (_) { }
+
+  // 9. Verificar misiones vinculadas a evaluación IA
+  try {
+    const { verificarTriggerInterno } = await import('./misiones.js');
+    if (typeof verificarTriggerInterno === 'function') {
+      await verificarTriggerInterno(clerkId, {
+        trigger: 'prueba_ia_completada',
+        juego_id: prueba_id,
+      });
+    }
+  } catch (_) { }
+
   // 9. Devolver el resumen completo al frontend (Fase 4 pantalla final)
   return res({
     ok: true,

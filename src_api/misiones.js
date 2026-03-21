@@ -86,6 +86,7 @@ function inferirTablaFuente(accionTrigger) {
   if (accionTrigger === 'tarea_subida') return 'tareas';
   if (accionTrigger === 'duelo_ganado') return 'duelos';
   if (accionTrigger === 'nota_ingresada' || accionTrigger === 'evaluacion_marcada') return 'evaluaciones';
+  if (accionTrigger === 'prueba_ia_completada') return 'pruebas_intentos';
   return null;
 }
 // ============================================
@@ -499,6 +500,18 @@ async function evaluarCondicion(banco, triggerActual, ctx) {
     if (banco.juego_id.toLowerCase() !== jidActual.toLowerCase()) return false;
   }
 
+  // Evaluación IA específica — verificar que la prueba siga forzada y activa
+  if (banco.accion_trigger === 'prueba_ia_completada' && banco.juego_id) {
+    if (!jidActual) return false;
+    if (banco.juego_id !== jidActual) return false;
+    // Verificar que la prueba siga forzada y activa en la BD
+    const pruebaRows = await query(
+      `SELECT id FROM pruebas_activas WHERE id = $1 AND activa = TRUE AND forzada = TRUE`,
+      [banco.juego_id]
+    );
+    if (!pruebaRows || pruebaRows.length === 0) return false;
+  }
+
   if (banco.parametro_valor && asignatura) {
     if (banco.parametro_valor.toLowerCase() !== asignatura.toLowerCase()) return false;
   }
@@ -566,6 +579,15 @@ async function contarOcurrenciasHoy(userId, banco, hoy) {
        WHERE ganador_id = $1 AND DATE(finalizado_at) = $2 AND estado = 'finalizado'`,
       [userId, hoy]
     );
+    return Number(rows[0]?.n || 0);
+  }
+
+  if (trigger === 'prueba_ia_completada') {
+    const params = [userId, hoy];
+    let sql = `SELECT COUNT(*) AS n FROM pruebas_intentos
+               WHERE user_id = $1 AND DATE(created_at) = $2`;
+    if (banco.juego_id) { sql += ' AND prueba_id = $3'; params.push(banco.juego_id); }
+    const rows = await query(sql, params);
     return Number(rows[0]?.n || 0);
   }
 
